@@ -82,46 +82,33 @@ function preparerPlaylistDynamique(office) {
 function convertirHtmlVersAudio(fichierHtml) {
     if (!fichierHtml || fichierHtml === 'empty.html') return null;
     
-    console.log('Conversion HTML vers audio:', fichierHtml);
-    
-    // Remplacer .html par .opus
-    let audioPath = fichierHtml.replace('.html', '.opus');
-    
-    // Si le chemin commence par un dossier d'office (laudes/, vepres/, milieu/, etc.)
-    // on doit le remplacer par audio/office/
-    const officeMatch = audioPath.match(/^(laudes|vepres|milieu|lectures|complies)\//);
-    if (officeMatch) {
-        const office = officeMatch[1];
-        // Remplacer le dossier office par audio/office
-        audioPath = audioPath.replace(/^[^\/]+\//, 'audio/' + office + '/');
-        console.log('  -> Chemin après remplacement office:', audioPath);
+    // 1. On nettoie le nom (ex: "psaumes/94.html" devient "94")
+    var parties = fichierHtml.split('/');
+    var nomSeul = parties[parties.length - 1].replace('.html', '');
+    var dossierOriginal = parties.length > 1 ? parties[0] : '';
+
+    var cheminFinal = "";
+
+    // 2. CAS DES PSAUMES (ex: 50, 94, psaume118)
+    if (!isNaN(nomSeul) || nomSeul.indexOf('psaume') !== -1) {
+        var num = nomSeul.replace('psaume', '');
+        cheminFinal = "audio/psaumes/psaume" + num + ".opus";
+    } 
+    // 3. CAS DES CANTIQUES (ex: NT2)
+    else if (fichierHtml.indexOf('cantiques/') !== -1) {
+        cheminFinal = "audio/cantiques/" + nomSeul + ".opus";
+    } 
+    // 4. CAS DES OFFICES (laudes, vepres...)
+    else if (dossierOriginal !== '') {
+        cheminFinal = "audio/" + dossierOriginal + "/" + nomSeul + ".opus";
+    } 
+    // 5. PAR DÉFAUT
+    else {
+        cheminFinal = "audio/" + nomSeul + ".opus";
     }
-    
-    // Vérifier si c'est un psaume (dans le dossier psaumes/)
-    if (audioPath.includes('psaumes/psaume')) {
-        // Extraire juste le nom du fichier psaume
-        const psaumeMatch = audioPath.match(/psaume(.+)\.opus$/);
-        if (psaumeMatch) {
-            audioPath = 'audio/psaumes/psaume' + psaumeMatch[1] + '.opus';
-        }
-    }
-    
-    // Vérifier si c'est un cantique (dans le dossier cantiques/)
-    if (audioPath.includes('cantiques/')) {
-        // Extraire juste le nom du fichier cantique
-        const cantiqueMatch = audioPath.match(/cantiques\/(.+)\.opus$/);
-        if (cantiqueMatch) {
-            audioPath = 'audio/cantiques/' + cantiqueMatch[1] + '.opus';
-        }
-    }
-    
-    // Si le chemin ne commence pas par audio/, l'ajouter
-    if (!audioPath.startsWith('audio/')) {
-        audioPath = AUDIO_ROOT + audioPath;
-    }
-    
-    console.log('  -> Chemin audio final:', audioPath);
-    return audioPath;
+
+    // AJOUT DU SLASH INITIAL POUR ÉVITER LA 404
+    return "/" + cheminFinal;
 }
 
 // Extraire un nom lisible du fichier
