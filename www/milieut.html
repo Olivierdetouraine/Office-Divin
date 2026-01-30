@@ -32,4 +32,13 @@
 		<ons-icon id='plein-ecran' icon="md-fullscreen">
 		</ons-icon>
 	</ons-fab>
+	
+	<script>
+		Initialisation_parametres();
+		Initialisation_evenements('milieu');
+		
+		// Charger l'office au chargement de la page
+		console.log('Chargement de l\'office du milieu (version onglets)...');
+		Remplir_office('milieu');
+	</script>
 </ons-page>
