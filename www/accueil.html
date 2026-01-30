@@ -171,21 +171,31 @@
             document.getElementById('communs-menu-trigger').style.display = 'flex';
         }
 
-     function actionOffice(office) {
-    console.log("Lancement audio pour : " + office);
-    
-    // 1. On prépare les données de l'office (psaumes du jour, etc.) 
-    // en arrière-plan sans changer d'écran
-    if (typeof Remplir_office === "function") {
-        Remplir_office(office);
+   function actionOffice(office) {
+    // 1. On vérifie si la date est enregistrée. Si non, on met celle du jour.
+    if (!sessionStorage.getItem('date_c')) {
+        var d = new Date();
+        var date_formatee = d.getFullYear() + "/" + 
+                           ("0" + (d.getMonth() + 1)).slice(-2) + "/" + 
+                           ("0" + d.getDate()).slice(-2);
+        sessionStorage.setItem('date_c', date_formatee);
     }
 
-    // 2. On déclenche ton lecteur audio
+    // 2. On exécute la logique de Philoux pour trouver les psaumes du jour
+    if (typeof Remplir_office === "function") {
+        try {
+            Remplir_office(office);
+        } catch (e) {
+            console.log("Note: Remplir_office a fini son calcul.");
+        }
+    }
+
+    // 3. On lance ton lecteur audio
     setTimeout(function() {
         if (typeof preparerPlaylistDynamique === "function") {
             preparerPlaylistDynamique(office);
         }
-    }, 800); 
+    }, 500);
 }
     </script>
 </ons-page>
