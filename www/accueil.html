@@ -179,6 +179,18 @@
                 // Appelle playCommun(categorie, office) dans audio-player.js
                 if (typeof playCommun === "function") { playCommun(currentSaintID, office); }
             }
+        }  function actionOffice(office) {
+    if (currentMode === "propre") {
+        // Cette commande va charger le texte ET déclencher l'audio via le nouveau Charge_page
+        if (typeof Charge_page === "function") { 
+            Charge_page(office + '.html'); 
         }
+    } else {
+        // Pour les communs, on garde la logique de playlist si elle est définie
+        if (typeof playCommun === "function") { 
+            playCommun(currentSaintID, office); 
+        }
+    }
+}
     </script>
 </ons-page>
