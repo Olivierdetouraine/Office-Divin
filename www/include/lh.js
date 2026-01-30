@@ -674,8 +674,15 @@ function Termine_office (office, affiche_sanctoral) {
 	} else {
 		Charge_tout(office);
 	}
+
+// Lancer le lecteur audio après le chargement
 setTimeout(function() {
-    preparerPlaylistDynamique(office);
+    console.log('Tentative de lancement du lecteur audio pour:', office);
+    if (typeof preparerPlaylistDynamique === 'function') {
+        preparerPlaylistDynamique(office);
+    } else {
+        console.error('La fonction preparerPlaylistDynamique n\'existe pas!');
+    }
 }, 800);
 
 } // fin de la fonction Termine()
