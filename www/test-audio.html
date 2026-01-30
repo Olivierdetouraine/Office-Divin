@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Lecteur Audio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #logs {
+            background: #f0f0f0;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test du Lecteur Audio</h1>
+    
+    <h2>Test 1 : Vérifier que les scripts sont chargés</h2>
+    <button onclick="testScripts()">Tester les scripts</button>
+    
+    <h2>Test 2 : Simuler un office avec des psaumes</h2>
+    <button onclick="testOfficeSimule()">Simuler Office du Milieu</button>
+    
+    <h2>Test 3 : Lancer le lecteur manuellement</h2>
+    <button onclick="testLecteurManuel()">Lancer le lecteur</button>
+    
+    <h2>Test 4 : Tester un fichier audio directement</h2>
+    <button onclick="testAudioDirect()">Tester psaume21-I.opus</button>
+    
+    <div id="logs"></div>
+    
+    <script src="include/jquery-3.3.1.min.js"></script>
+    <script src="include/lh.js"></script>
+    <script src="include/audio-player.js"></script>
+    
+    <script>
+        function log(message) {
+            const logsDiv = document.getElementById('logs');
+            logsDiv.textContent += message + '\n';
+            console.log(message);
+        }
+        
+        function testScripts() {
+            log('=== TEST DES SCRIPTS ===');
+            log('jQuery chargé: ' + (typeof $ !== 'undefined'));
+            log('Prefixe_office existe: ' + (typeof Prefixe_office === 'function'));
+            log('Labels_office existe: ' + (typeof Labels_office === 'function'));
+            log('preparerPlaylistDynamique existe: ' + (typeof preparerPlaylistDynamique === 'function'));
+            log('convertirHtmlVersAudio existe: ' + (typeof convertirHtmlVersAudio === 'function'));
+        }
+        
+        function testOfficeSimule() {
+            log('\n=== TEST OFFICE SIMULÉ ===');
+            
+            // Simuler les données de sessionStorage pour l'office du milieu
+            sessionStorage.setItem('m_psaume_1', '21-I');
+            sessionStorage.setItem('m_psaume_2', '21-II');
+            sessionStorage.setItem('m_psaume_3', '');
+            sessionStorage.setItem('m_antienne_1', 'milieu/antiennes/antienne_test.html');
+            sessionStorage.setItem('m_antienne_2', 'milieu/antiennes/antienne_test2.html');
+            sessionStorage.setItem('m_antienne_3', '');
+            
+            log('SessionStorage rempli avec:');
+            log('  m_psaume_1: ' + sessionStorage.getItem('m_psaume_1'));
+            log('  m_psaume_2: ' + sessionStorage.getItem('m_psaume_2'));
+            log('  m_antienne_1: ' + sessionStorage.getItem('m_antienne_1'));
+            log('  m_antienne_2: ' + sessionStorage.getItem('m_antienne_2'));
+            
+            log('\nAppel de preparerPlaylistDynamique("milieu")...');
+            if (typeof preparerPlaylistDynamique === 'function') {
+                preparerPlaylistDynamique('milieu');
+            } else {
+                log('ERREUR: preparerPlaylistDynamique n\'existe pas!');
+            }
+        }
+        
+        function testLecteurManuel() {
+            log('\n=== TEST LECTEUR MANUEL ===');
+            
+            const playlist = [
+                {
+                    path: 'audio/psaumes/psaume21-I.opus',
+                    nom: 'Psaume 21-I'
+                },
+                {
+                    path: 'audio/psaumes/psaume21-II.opus',
+                    nom: 'Psaume 21-II'
+                }
+            ];
+            
+            log('Playlist créée avec ' + playlist.length + ' pistes');
+            log('Appel de startPlaylist...');
+            
+            if (typeof startPlaylist === 'function') {
+                startPlaylist(playlist, 'Test Manuel');
+            } else {
+                log('ERREUR: startPlaylist n\'existe pas!');
+            }
+        }
+        
+        function testAudioDirect() {
+            log('\n=== TEST AUDIO DIRECT ===');
+            
+            const audio = new Audio('audio/psaumes/psaume21-I.opus');
+            
+            audio.addEventListener('loadedmetadata', function() {
+                log('✓ Fichier audio chargé avec succès');
+                log('  Durée: ' + audio.duration + ' secondes');
+            });
+            
+            audio.addEventListener('error', function(e) {
+                log('✗ Erreur de chargement du fichier audio');
+                log('  Code erreur: ' + audio.error.code);
+                log('  Message: ' + audio.error.message);
+            });
+            
+            audio.load();
+            
+            log('Tentative de chargement de: audio/psaumes/psaume21-I.opus');
+            log('Attendez quelques secondes...');
+        }
+    </script>
+</body>
+</html>
