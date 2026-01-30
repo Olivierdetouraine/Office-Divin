@@ -1,0 +1,27 @@
+# Dossier de référence (non déployé)
+REF/
+
+# Dépendances
+node_modules/
+
+# Builds
+dist/
+build/
+
+# Environnement
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
