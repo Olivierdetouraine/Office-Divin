@@ -648,9 +648,8 @@ function Charge_tout (office) {
 		}
 	}
 } // fin de la fonction Charge_tout()
-
 function Termine_office (office, affiche_sanctoral) {
-    prefixe = Prefixe_office(office);
+    var prefixe = Prefixe_office(office);
 
     if (sessionStorage.getItem(prefixe+'temporal').length > 0) {
         $('#'+prefixe+'temporal').load(sessionStorage.getItem(prefixe+'temporal'), function() {Charge_tout(office);} );
@@ -660,30 +659,22 @@ function Termine_office (office, affiche_sanctoral) {
         Charge_tout(office);
     }
 
-    // ON SORT L'APPEL DE L'AUDIO ICI POUR QU'IL SOIT TOUJOURS EXÉCUTÉ
-    console.log('=== Lancement Audio pour:', office);
+    // Bloc de lancement Audio avec tes logs de debug
+    console.log('=== DEBUT Termine_office - office:', office);
+    console.log('=== Type de preparerPlaylistDynamique:', typeof preparerPlaylistDynamique);
+
     setTimeout(function() {
+        console.log('=== DANS setTimeout - Tentative pour:', office);
         if (typeof preparerPlaylistDynamique === 'function') {
+            console.log('=== Appel de preparerPlaylistDynamique ok');
             preparerPlaylistDynamique(office);
+        } else {
+            console.error('=== ERREUR: La fonction preparerPlaylistDynamique n\'existe pas !');
         }
     }, 800);
-}
+} // Fin UNIQUE de la fonction
 
-// Lancer le lecteur audio après le chargement
-console.log('=== DEBUT Termine_office - office:', office);
-console.log('=== Type de preparerPlaylistDynamique:', typeof preparerPlaylistDynamique);
-setTimeout(function() {
-    console.log('=== DANS setTimeout - Tentative de lancement du lecteur audio pour:', office);
-    if (typeof preparerPlaylistDynamique === 'function') {
-        console.log('=== Appel de preparerPlaylistDynamique');
-        preparerPlaylistDynamique(office);
-    } else {
-        console.error('=== ERREUR: La fonction preparerPlaylistDynamique n\'existe pas!');
-        console.error('=== Type actuel:', typeof preparerPlaylistDynamique);
-    }
-}, 800);
-
-} // fin de la fonction Termine()
+ // fin de la fonction Termine()
 
 function Formulaire_lectures (temps, semaine, jour, annee, date_jour, mois, jour_du_mois, preseance, preseance_sanctoral) {
 	var semaine_p = Semaine_psautier(semaine);
