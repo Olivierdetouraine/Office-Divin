@@ -6,143 +6,208 @@ var currentPlaylist = [];
 var currentIndex = 0;
 var isDragging = false;
 
-// --- FONCTIONS DE CÂBLAGE POUR accueil.html ---
-
-/**
- * Appelé par actionOffice('laudes') dans accueil.html
- */
-function playOffice(office) {
-    console.log("Lecture de l'office propre :", office);
-    // On lance la mécanique de Philoux pour charger le texte
-    if (typeof Remplir_office === "function") {
-        Remplir_office(office);
-    }
-    // On lance la playlist audio
-    preparerPlaylistDynamique(office);
-}
-
-/**
- * Appelé par actionOffice pour les Communs (Marie, Apôtre, etc.)
- */
-function playCommun(categorie, office) {
-    console.log("Lecture du commun :", categorie, "pour l'office :", office);
-    // Ici on pourrait ajouter la logique de chargement de texte du commun
-    // Pour l'instant, on lance l'audio
-    preparerPlaylistDynamique(office);
-}
-
-// --- LOGIQUE DU LECTEUR ---
-
+// Fonction pour préparer la playlist dynamique à partir des sessionStorage
 function preparerPlaylistDynamique(office) {
+    console.log('=== DEBUT preparerPlaylistDynamique ===');
+    console.log('Office:', office);
+    
     const prefixe = Prefixe_office(office);
     const labels = Labels_office(office);
     const playlist = [];
     
-    // 1. Invitatoire (Laudes uniquement)
+    console.log('Prefixe:', prefixe);
+    console.log('Labels:', labels);
+    
+    // Ajouter les labels communs
+    const labelsCommuns = ['temporal', 'sanctoral', 'introduction'];
+    
+    // Pour laudes, ajouter l'invitatoire
     if (office === 'laudes') {
-        ['antienne_inv', 'psaume_inv'].forEach(label => {
+        const invitatoireLabels = ['antienne_inv', 'psaume_inv', 'antienne_invb'];
+        invitatoireLabels.forEach(label => {
             const fichier = sessionStorage.getItem(prefixe + label);
-            if (fichier && fichier !== 'empty.html') {
+            if (fichier && fichier !== '' && fichier !== 'empty.html') {
                 playlist.push({
-                    path: convertirHtmlVersAudio(fichier, label),
+                    path: convertirHtmlVersAudio(fichier),
                     nom: extraireNomFichier(fichier)
                 });
             }
         });
     }
     
-    // 2. Corps de l'office
-    labels.forEach(label => {
-        if (office === 'laudes' && (label === 'antienne_inv' || label === 'psaume_inv')) return;
-
+    // Parcourir tous les labels de l'office
+    labelsCommuns.concat(labels).forEach(label => {
         const fichier = sessionStorage.getItem(prefixe + label);
+        console.log(`Label: ${prefixe}${label}, Fichier: ${fichier}`);
         if (fichier && fichier !== '' && fichier !== 'empty.html') {
-            const audioPath = convertirHtmlVersAudio(fichier, label);
-            if (audioPath) {
-                playlist.push({
-                    path: audioPath,
-                    nom: extraireNomFichier(fichier)
-                });
-                
-                // Répétition des antiennes
-                const repeter = (localStorage.getItem("repeter_antiennes") === 'true');
-                if (label.includes('antienne') && repeter) {
-                    playlist.push({
-                        path: audioPath,
-                        nom: extraireNomFichier(fichier) + ' (Bis)'
-                    });
-                }
-            }
+            const audioPath = convertirHtmlVersAudio(fichier);
+            console.log(`  -> Chemin audio: ${audioPath}`);
+            playlist.push({
+                path: audioPath,
+                nom: extraireNomFichier(fichier)
+            });
         }
     });
     
-    if (playlist.length > 0) {
-        startPlaylist(playlist, office.charAt(0).toUpperCase() + office.slice(1));
+    // Gérer la répétition des antiennes si activée
+    const repeter = (localStorage.getItem("repeter_antiennes") === 'true');
+    if (repeter) {
+        // Ajouter les antiennes répétées (suffixe 'b')
+        const antienneLabels = labels.filter(l => l.includes('antienne'));
+        antienneLabels.forEach(label => {
+            const fichier = sessionStorage.getItem(prefixe + label);
+            if (fichier && fichier !== '' && fichier !== 'empty.html') {
+                playlist.push({
+                    path: convertirHtmlVersAudio(fichier),
+                    nom: extraireNomFichier(fichier) + ' (répétition)'
+                });
+            }
+        });
     }
+    
+    // Lancer la lecture si la playlist n'est pas vide
+    console.log('Playlist finale:', playlist);
+    console.log('Nombre de pistes:', playlist.length);
+    
+    if (playlist.length > 0) {
+        console.log('Lancement de la playlist...');
+        startPlaylist(playlist, office.charAt(0).toUpperCase() + office.slice(1));
+    } else {
+        console.log('AUCUNE PISTE DANS LA PLAYLIST - Le lecteur ne sera pas affiché');
+    }
+    console.log('=== FIN preparerPlaylistDynamique ===');
 }
 
-function convertirHtmlVersAudio(fichier, label) {
-    if (!fichier || fichier === 'empty.html') return null;
-    let audioPath = "";
-
-    if (label.includes('psaume')) {
-        let num = fichier.replace('psaumes/psaume', '').replace('.html', '');
-        audioPath = 'audio/psaumes/psaume' + num + '.opus';
-    } 
-    else if (label.includes('cantique')) {
-        let num = fichier.replace('cantiques/', '').replace('.html', '');
-        audioPath = 'audio/cantiques/' + num + '.opus';
+// Convertir un chemin HTML en chemin audio
+function convertirHtmlVersAudio(fichierHtml) {
+    if (!fichierHtml || fichierHtml === 'empty.html') return null;
+    
+    console.log('Conversion HTML vers audio:', fichierHtml);
+    
+    // Remplacer .html par .opus
+    let audioPath = fichierHtml.replace('.html', '.opus');
+    
+    // Si le chemin commence par un dossier d'office (laudes/, vepres/, milieu/, etc.)
+    // on doit le remplacer par audio/office/
+    const officeMatch = audioPath.match(/^(laudes|vepres|milieu|lectures|complies)\//);
+    if (officeMatch) {
+        const office = officeMatch[1];
+        // Remplacer le dossier office par audio/office
+        audioPath = audioPath.replace(/^[^\/]+\//, 'audio/' + office + '/');
+        console.log('  -> Chemin après remplacement office:', audioPath);
     }
-    else {
-        audioPath = AUDIO_ROOT + fichier.replace('.html', '.opus');
+    
+    // Vérifier si c'est un psaume (dans le dossier psaumes/)
+    if (audioPath.includes('psaumes/psaume')) {
+        // Extraire juste le nom du fichier psaume
+        const psaumeMatch = audioPath.match(/psaume(.+)\.opus$/);
+        if (psaumeMatch) {
+            audioPath = 'audio/psaumes/psaume' + psaumeMatch[1] + '.opus';
+        }
     }
+    
+    // Vérifier si c'est un cantique (dans le dossier cantiques/)
+    if (audioPath.includes('cantiques/')) {
+        // Extraire juste le nom du fichier cantique
+        const cantiqueMatch = audioPath.match(/cantiques\/(.+)\.opus$/);
+        if (cantiqueMatch) {
+            audioPath = 'audio/cantiques/' + cantiqueMatch[1] + '.opus';
+        }
+    }
+    
+    // Si le chemin ne commence pas par audio/, l'ajouter
+    if (!audioPath.startsWith('audio/')) {
+        audioPath = AUDIO_ROOT + audioPath;
+    }
+    
+    console.log('  -> Chemin audio final:', audioPath);
     return audioPath;
 }
 
+// Extraire un nom lisible du fichier
 function extraireNomFichier(fichier) {
     if (!fichier) return '';
-    return fichier.split('/').pop().replace('.html', '').replace(/_/g, ' ').toUpperCase();
+    
+    // Extraire le nom du fichier sans le chemin et l'extension
+    const nomComplet = fichier.split('/').pop();
+    const nomSansExt = nomComplet.replace('.html', '').replace('.opus', '');
+    
+    // Remplacer les underscores par des espaces et capitaliser
+    return nomSansExt
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase());
 }
 
+// Démarrer la lecture d'une playlist
 function startPlaylist(playlist, titre) {
     currentPlaylist = playlist;
     currentIndex = 0;
+    
+    // Créer ou afficher le lecteur
     showMiniPlayer(titre);
+    
+    // Lancer la lecture du premier élément
     playCurrentTrack();
 }
 
+// Lire la piste actuelle
 function playCurrentTrack() {
-    if (currentIndex >= currentPlaylist.length) return;
+    if (currentIndex >= currentPlaylist.length) {
+        // Fin de la playlist
+        hideMiniPlayer();
+        return;
+    }
     
     const track = currentPlaylist[currentIndex];
+    
+    // Créer un nouvel élément audio si nécessaire
     if (!currentAudio) {
         currentAudio = new Audio();
         setupAudioEvents();
     }
     
-    const trackNameElement = document.getElementById('track-name');
-    if (trackNameElement) trackNameElement.textContent = track.nom;
-
+    // Mettre à jour le nom du fichier affiché
+    updateTrackName(track.nom);
+    
+    // Charger et lire
     currentAudio.src = track.path;
-    currentAudio.play().catch(() => nextTrack());
+    currentAudio.load();
+    currentAudio.play().catch(err => {
+        console.warn("Fichier audio manquant ou erreur : " + track.path);
+        // Passer au suivant automatiquement
+        nextTrack();
+    });
 }
 
+// Configurer les événements audio
 function setupAudioEvents() {
-    currentAudio.onended = () => nextTrack();
+    if (!currentAudio) return;
+    
+    currentAudio.onended = () => {
+        nextTrack();
+    };
+    
     currentAudio.ontimeupdate = () => {
         const progress = document.getElementById('audio-progress');
+        const timeDisplay = document.getElementById('audio-time');
+        
         if (progress && !isDragging && !isNaN(currentAudio.duration)) {
             progress.value = (currentAudio.currentTime / currentAudio.duration) * 100;
+            timeDisplay.textContent = formatTime(currentAudio.currentTime) + " / " + formatTime(currentAudio.duration);
         }
     };
+    
+    currentAudio.onplay = () => updatePlayPauseIcon();
+    currentAudio.onpause = () => updatePlayPauseIcon();
 }
 
+// Piste suivante
 function nextTrack() {
     currentIndex++;
-    if (currentIndex < currentPlaylist.length) playCurrentTrack();
-    else hideMiniPlayer();
+    playCurrentTrack();
 }
 
+// Piste précédente
 function previousTrack() {
     if (currentIndex > 0) {
         currentIndex--;
@@ -150,49 +215,114 @@ function previousTrack() {
     }
 }
 
+// Afficher le mini-lecteur
 function showMiniPlayer(titre) {
     let player = document.getElementById('mini-player');
+    
     if (!player) {
         player = document.createElement('div');
         player.id = 'mini-player';
-        // Z-INDEX très élevé pour passer au dessus de Onsen UI
-        player.style.cssText = `position:fixed;bottom:0;left:0;right:0;background:${ROUGE_OFFICIEL};color:white;padding:15px;z-index:99999;border-radius:15px 15px 0 0;box-shadow:0 -2px 10px rgba(0,0,0,0.3);`;
+        player.style.cssText = `
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: ${ROUGE_OFFICIEL};
+            color: white;
+            padding: 15px;
+            z-index: 9999;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+        `;
+        
         player.innerHTML = `
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
-                <b id="player-title" style="text-transform:uppercase;font-size:14px;"></b>
-                <ons-icon icon="md-close" onclick="hideMiniPlayer()"></ons-icon>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <b id="player-title" style="text-transform: uppercase; font-size: 14px;"></b>
+                <div id="audio-time" style="font-size: 12px;">0:00 / 0:00</div>
             </div>
-            <div id="track-name" style="font-size:11px;margin-bottom:8px;opacity:0.8;"></div>
-            <input type="range" id="audio-progress" value="0" max="100" style="width:100%;margin-bottom:10px;" oninput="seekAudio(this.value)">
-            <div style="display:flex;justify-content:center;gap:30px;align-items:center;">
-                <ons-icon icon="md-skip-previous" size="25px" onclick="previousTrack()"></ons-icon>
-                <ons-icon id="play-pause-icon" icon="md-pause" size="35px" onclick="togglePlay()"></ons-icon>
-                <ons-icon icon="md-skip-next" size="25px" onclick="nextTrack()"></ons-icon>
-            </div>`;
+            <div id="track-name" style="font-size: 11px; margin-bottom: 8px; opacity: 0.9; font-style: italic;"></div>
+            <input type="range" id="audio-progress" value="0" max="100" 
+                   style="width: 100%; accent-color: white; margin-bottom: 10px;"
+                   onmousedown="isDragging=true" 
+                   onmouseup="isDragging=false; seekAudio(this.value)"
+                   ontouchstart="isDragging=true"
+                   ontouchend="isDragging=false; seekAudio(this.value)">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 40px;">
+                <ons-icon icon="md-skip-previous" size="30px" onclick="previousTrack()" style="cursor: pointer;"></ons-icon>
+                <ons-icon id="play-pause-icon" icon="md-pause" size="40px" onclick="togglePlay()" style="cursor: pointer;"></ons-icon>
+                <ons-icon icon="md-skip-next" size="30px" onclick="nextTrack()" style="cursor: pointer;"></ons-icon>
+            </div>
+        `;
+        
         document.body.appendChild(player);
     }
+    
     player.style.display = 'block';
     document.getElementById('player-title').textContent = titre;
 }
 
+// Masquer le mini-lecteur
 function hideMiniPlayer() {
     const player = document.getElementById('mini-player');
-    if (player) player.style.display = 'none';
-    if (currentAudio) currentAudio.pause();
+    if (player) {
+        player.style.display = 'none';
+    }
+    
+    // Arrêter l'audio
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.src = '';
+        currentAudio = null;
+    }
+    
+    // Réinitialiser la playlist
+    currentPlaylist = [];
+    currentIndex = 0;
 }
 
-function togglePlay() {
-    if (!currentAudio) return;
-    const icon = document.getElementById('play-pause-icon');
-    if (currentAudio.paused) {
-        currentAudio.play();
-        icon.setAttribute('icon', 'md-pause');
-    } else {
-        currentAudio.pause();
-        icon.setAttribute('icon', 'md-play');
+// Mettre à jour le nom de la piste
+function updateTrackName(nom) {
+    const trackNameEl = document.getElementById('track-name');
+    if (trackNameEl) {
+        trackNameEl.textContent = nom || '';
     }
 }
 
+// Mettre à jour l'icône play/pause
+function updatePlayPauseIcon() {
+    const icon = document.getElementById('play-pause-icon');
+    if (icon && currentAudio) {
+        icon.setAttribute('icon', currentAudio.paused ? 'md-play' : 'md-pause');
+    }
+}
+
+// Basculer play/pause
+function togglePlay() {
+    if (!currentAudio) return;
+    
+    if (currentAudio.paused) {
+        currentAudio.play();
+    } else {
+        currentAudio.pause();
+    }
+}
+
+// Rechercher dans l'audio
 function seekAudio(value) {
-    if (currentAudio) currentAudio.currentTime = (value / 100) * currentAudio.duration;
+    if (currentAudio && !isNaN(currentAudio.duration)) {
+        currentAudio.currentTime = (value / 100) * currentAudio.duration;
+    }
+}
+
+// Formater le temps
+function formatTime(seconds) {
+    if (isNaN(seconds)) return "0:00";
+    const min = Math.floor(seconds / 60);
+    const sec = Math.floor(seconds % 60);
+    return min + ":" + (sec < 10 ? "0" : "") + sec;
+}
+
+// Arrêter l'audio (appelé lors du changement de page)
+function stopAudio() {
+    hideMiniPlayer();
 }
