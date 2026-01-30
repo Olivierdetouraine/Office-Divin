@@ -82,28 +82,36 @@ function preparerPlaylistDynamique(office) {
 function convertirHtmlVersAudio(fichierHtml) {
     if (!fichierHtml || fichierHtml === 'empty.html') return null;
     
+    console.log('Conversion HTML vers audio:', fichierHtml);
+    
     // Remplacer .html par .opus
     let audioPath = fichierHtml.replace('.html', '.opus');
     
-    // Si le chemin commence par un dossier d'office (laudes/, vepres/, etc.)
-    // on extrait juste le nom du fichier pour les psaumes et cantiques
-    // car ils sont dans le dossier audio/psaumes/ ou audio/cantiques/
+    // Si le chemin commence par un dossier d'office (laudes/, vepres/, milieu/, etc.)
+    // on doit le remplacer par audio/office/
+    const officeMatch = audioPath.match(/^(laudes|vepres|milieu|lectures|complies)\//);
+    if (officeMatch) {
+        const office = officeMatch[1];
+        // Remplacer le dossier office par audio/office
+        audioPath = audioPath.replace(/^[^\/]+\//, 'audio/' + office + '/');
+        console.log('  -> Chemin après remplacement office:', audioPath);
+    }
     
-    // Vérifier si c'est un psaume
+    // Vérifier si c'est un psaume (dans le dossier psaumes/)
     if (audioPath.includes('psaumes/psaume')) {
         // Extraire juste le nom du fichier psaume
         const psaumeMatch = audioPath.match(/psaume(.+)\.opus$/);
         if (psaumeMatch) {
-            audioPath = 'psaumes/psaume' + psaumeMatch[1] + '.opus';
+            audioPath = 'audio/psaumes/psaume' + psaumeMatch[1] + '.opus';
         }
     }
     
-    // Vérifier si c'est un cantique
+    // Vérifier si c'est un cantique (dans le dossier cantiques/)
     if (audioPath.includes('cantiques/')) {
         // Extraire juste le nom du fichier cantique
         const cantiqueMatch = audioPath.match(/cantiques\/(.+)\.opus$/);
         if (cantiqueMatch) {
-            audioPath = 'cantiques/' + cantiqueMatch[1] + '.opus';
+            audioPath = 'audio/cantiques/' + cantiqueMatch[1] + '.opus';
         }
     }
     
@@ -112,6 +120,7 @@ function convertirHtmlVersAudio(fichierHtml) {
         audioPath = AUDIO_ROOT + audioPath;
     }
     
+    console.log('  -> Chemin audio final:', audioPath);
     return audioPath;
 }
 
