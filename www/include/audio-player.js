@@ -169,11 +169,17 @@ function playCurrentTrack() {
     // Mettre à jour le nom du fichier affiché
     updateTrackName(track.nom);
     
+    // --- LOGS DE DEBUG ---
+    console.log("--- TEST LECTURE ---");
+    console.log("Nom affiché : " + track.nom);
+    console.log("Chemin tenté : " + track.path);
+    
     // Charger et lire
     currentAudio.src = track.path;
     currentAudio.load();
-    currentAudio.play().catch(err => {
-        console.warn("Fichier audio manquant ou erreur : " + track.path);
+    
+    currentAudio.play().catch(function(err) {
+        console.error("ERREUR 404 - Introuvable : " + track.path);
         // Passer au suivant automatiquement
         nextTrack();
     });
