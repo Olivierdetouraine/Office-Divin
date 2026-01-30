@@ -171,26 +171,21 @@
             document.getElementById('communs-menu-trigger').style.display = 'flex';
         }
 
-        function actionOffice(office) {
-            if (currentMode === "propre") {
-                // Appelle playOffice(office) dans audio-player.js
-                if (typeof playOffice === "function") { playOffice(office); }
-            } else {
-                // Appelle playCommun(categorie, office) dans audio-player.js
-                if (typeof playCommun === "function") { playCommun(currentSaintID, office); }
-            }
-        }  function actionOffice(office) {
-    if (currentMode === "propre") {
-        // Cette commande va charger le texte ET déclencher l'audio via le nouveau Charge_page
-        if (typeof Charge_page === "function") { 
-            Charge_page(office + '.html'); 
-        }
-    } else {
-        // Pour les communs, on garde la logique de playlist si elle est définie
-        if (typeof playCommun === "function") { 
-            playCommun(currentSaintID, office); 
-        }
+     function actionOffice(office) {
+    console.log("Lancement audio pour : " + office);
+    
+    // 1. On prépare les données de l'office (psaumes du jour, etc.) 
+    // en arrière-plan sans changer d'écran
+    if (typeof Remplir_office === "function") {
+        Remplir_office(office);
     }
+
+    // 2. On déclenche ton lecteur audio
+    setTimeout(function() {
+        if (typeof preparerPlaylistDynamique === "function") {
+            preparerPlaylistDynamique(office);
+        }
+    }, 800); 
 }
     </script>
 </ons-page>
