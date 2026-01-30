@@ -676,12 +676,16 @@ function Termine_office (office, affiche_sanctoral) {
 	}
 
 // Lancer le lecteur audio après le chargement
+console.log('=== DEBUT Termine_office - office:', office);
+console.log('=== Type de preparerPlaylistDynamique:', typeof preparerPlaylistDynamique);
 setTimeout(function() {
-    console.log('Tentative de lancement du lecteur audio pour:', office);
+    console.log('=== DANS setTimeout - Tentative de lancement du lecteur audio pour:', office);
     if (typeof preparerPlaylistDynamique === 'function') {
+        console.log('=== Appel de preparerPlaylistDynamique');
         preparerPlaylistDynamique(office);
     } else {
-        console.error('La fonction preparerPlaylistDynamique n\'existe pas!');
+        console.error('=== ERREUR: La fonction preparerPlaylistDynamique n\'existe pas!');
+        console.error('=== Type actuel:', typeof preparerPlaylistDynamique);
     }
 }, 800);
 
