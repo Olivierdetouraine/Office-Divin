@@ -650,30 +650,24 @@ function Charge_tout (office) {
 } // fin de la fonction Charge_tout()
 
 function Termine_office (office, affiche_sanctoral) {
-	// cette fonction permet de gérer le remplissage du formulaire des offices
-	// elle gère surtout le chargement asynchrone des fichiers 'temporal'
-	// (utilisés notamment pour les féries de l'Avent ou de Noël)
-	// puis du sanctoral
+    prefixe = Prefixe_office(office);
 
-	prefixe = Prefixe_office(office);
+    if (sessionStorage.getItem(prefixe+'temporal').length > 0) {
+        $('#'+prefixe+'temporal').load(sessionStorage.getItem(prefixe+'temporal'), function() {Charge_tout(office);} );
+    } else if (affiche_sanctoral) {
+        $('#'+prefixe+'sanctoral').load(sessionStorage.getItem(prefixe+'sanctoral'), function() {Charge_tout(office);} );
+    } else {
+        Charge_tout(office);
+    }
 
-	// on charge le fichier temporal s'il y en a un...
-	if (sessionStorage.getItem(prefixe+'temporal').length > 0) {
-		$('#'+prefixe+'temporal').load(sessionStorage.getItem(prefixe+'temporal'), function() {Charge_tout(office);} );
-
-		// puis, on superpose le sanctoral si nécessaire
-		if (affiche_sanctoral) {
-			$('#'+prefixe+'sanctoral').load(sessionStorage.getItem(prefixe+'sanctoral'), function() {Charge_tout(office);} );
-		}
-
-		// s'il n'y a pas de temporal, il suffit de charger le sanctoral
-	} else if (affiche_sanctoral) {
-		$('#'+prefixe+'sanctoral').load(sessionStorage.getItem(prefixe+'sanctoral'), function() {Charge_tout(office);} );
-
-		// enfin, on charge simplement le formulaire s'il n'y a ni temporal, ni sanctoral
-	} else {
-		Charge_tout(office);
-	}
+    // ON SORT L'APPEL DE L'AUDIO ICI POUR QU'IL SOIT TOUJOURS EXÉCUTÉ
+    console.log('=== Lancement Audio pour:', office);
+    setTimeout(function() {
+        if (typeof preparerPlaylistDynamique === 'function') {
+            preparerPlaylistDynamique(office);
+        }
+    }, 800);
+}
 
 // Lancer le lecteur audio après le chargement
 console.log('=== DEBUT Termine_office - office:', office);
