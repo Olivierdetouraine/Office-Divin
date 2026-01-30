@@ -209,19 +209,3 @@ function formatTime(s) {
 }
 
 function stopAudio() { hideMiniPlayer(); }
-
-// Fonction appelée depuis accueil.html pour lancer un office
-function playOffice(office) {
-    console.log('=== playOffice appelé avec:', office);
-    
-    // Charger la page de l'office
-    Charge_page(office + '.html');
-}
-
-// Fonction appelée depuis accueil.html pour lancer un commun
-function playCommun(categorie, office) {
-    console.log('=== playCommun appelé avec:', categorie, office);
-    
-    // Charger la page des communs
-    Charge_page('communs.html');
-}
