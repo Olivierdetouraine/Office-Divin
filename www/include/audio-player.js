@@ -8,9 +8,15 @@ var isDragging = false;
 
 // Fonction pour préparer la playlist dynamique à partir des sessionStorage
 function preparerPlaylistDynamique(office) {
+    console.log('=== DEBUT preparerPlaylistDynamique ===');
+    console.log('Office:', office);
+    
     const prefixe = Prefixe_office(office);
     const labels = Labels_office(office);
     const playlist = [];
+    
+    console.log('Prefixe:', prefixe);
+    console.log('Labels:', labels);
     
     // Ajouter les labels communs
     const labelsCommuns = ['temporal', 'sanctoral', 'introduction'];
@@ -32,9 +38,12 @@ function preparerPlaylistDynamique(office) {
     // Parcourir tous les labels de l'office
     labelsCommuns.concat(labels).forEach(label => {
         const fichier = sessionStorage.getItem(prefixe + label);
+        console.log(`Label: ${prefixe}${label}, Fichier: ${fichier}`);
         if (fichier && fichier !== '' && fichier !== 'empty.html') {
+            const audioPath = convertirHtmlVersAudio(fichier);
+            console.log(`  -> Chemin audio: ${audioPath}`);
             playlist.push({
-                path: convertirHtmlVersAudio(fichier),
+                path: audioPath,
                 nom: extraireNomFichier(fichier)
             });
         }
@@ -57,9 +66,16 @@ function preparerPlaylistDynamique(office) {
     }
     
     // Lancer la lecture si la playlist n'est pas vide
+    console.log('Playlist finale:', playlist);
+    console.log('Nombre de pistes:', playlist.length);
+    
     if (playlist.length > 0) {
+        console.log('Lancement de la playlist...');
         startPlaylist(playlist, office.charAt(0).toUpperCase() + office.slice(1));
+    } else {
+        console.log('AUCUNE PISTE DANS LA PLAYLIST - Le lecteur ne sera pas affiché');
     }
+    console.log('=== FIN preparerPlaylistDynamique ===');
 }
 
 // Convertir un chemin HTML en chemin audio
