@@ -66,8 +66,30 @@ function preparerPlaylistDynamique(office) {
 function convertirHtmlVersAudio(fichierHtml) {
     if (!fichierHtml || fichierHtml === 'empty.html') return null;
     
-    // Remplacer .html par .opus et ajouter le préfixe audio/
+    // Remplacer .html par .opus
     let audioPath = fichierHtml.replace('.html', '.opus');
+    
+    // Si le chemin commence par un dossier d'office (laudes/, vepres/, etc.)
+    // on extrait juste le nom du fichier pour les psaumes et cantiques
+    // car ils sont dans le dossier audio/psaumes/ ou audio/cantiques/
+    
+    // Vérifier si c'est un psaume
+    if (audioPath.includes('psaumes/psaume')) {
+        // Extraire juste le nom du fichier psaume
+        const psaumeMatch = audioPath.match(/psaume(.+)\.opus$/);
+        if (psaumeMatch) {
+            audioPath = 'psaumes/psaume' + psaumeMatch[1] + '.opus';
+        }
+    }
+    
+    // Vérifier si c'est un cantique
+    if (audioPath.includes('cantiques/')) {
+        // Extraire juste le nom du fichier cantique
+        const cantiqueMatch = audioPath.match(/cantiques\/(.+)\.opus$/);
+        if (cantiqueMatch) {
+            audioPath = 'cantiques/' + cantiqueMatch[1] + '.opus';
+        }
+    }
     
     // Si le chemin ne commence pas par audio/, l'ajouter
     if (!audioPath.startsWith('audio/')) {
