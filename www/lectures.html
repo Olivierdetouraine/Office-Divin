@@ -1,0 +1,39 @@
+<ons-page id='lectures'>
+	<ons-toolbar class='barre-menu'>
+		<div class="left bouton_menu_g" onclick="Ouvre_menu_g()">
+			<ons-icon icon="md-menu"></ons-icon>&nbsp;&nbsp;Lectures
+		</div>
+		<div class="center">
+			<div id="l_date" class="bouton_date"></div>
+		</div>
+		<div class="right">
+			<ons-toolbar-button onclick="Ouvre_menu()">
+				<ons-icon icon="md-settings"></ons-icon>
+			</ons-toolbar-button>
+		</div>
+	</ons-toolbar>
+
+	<ons-modal id='l_modal'>
+		<input type="text" id="l_calendrier" class="datepicker" name="l_calendrier" hidden/>
+	</ons-modal>
+
+	<ons-fab position="bottom right" modifier="mini" onclick="Plein_ecran();">
+		<ons-icon id='plein-ecran' icon="md-fullscreen"></ons-icon>
+	</ons-fab>
+
+	<ons-card class="cadre">
+		<div id="l_titre_principal" class="center"></div>
+		<div id="l_titre_sanctoral" class="center"></div>
+		<div id="l_titre_secondaire" class="center"></div>
+
+		<div id="l_temporal"></div>
+		<div id="l_sanctoral"></div>
+
+		<p class="center"><ons-button onclick="Charge_page('accueil.html')"><ons-icon icon="md-home"></ons-icon></ons-button></p>
+	</ons-card>
+
+	<script>
+		Initialisation_parametres();
+		Initialisation_evenements('lectures');
+	</script>
+</ons-page>

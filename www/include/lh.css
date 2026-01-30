@@ -1,0 +1,737 @@
+@font-face {
+	font-family: "Liturgie";
+	src: url('liturgy.ttf');
+}
+
+*:not(input):not(textarea):not(select) {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+#detect-area {
+	background-color: #FF0000!important;
+}
+
+body {
+	margin:0;
+	padding: 0px;
+	width: auto;
+	font-family: serif!important;
+}
+
+div.page__background {
+    background-image: url('../vitrail.jpg') !important; 
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-attachment: fixed !important;
+    background-size: cover !important;
+    top: 0 !important;
+    padding-top: 0 !important;
+}
+
+div.page__content {
+	font-family: serif!important;
+}
+
+.card {
+	padding-bottom: 3.2em!important;
+}
+
+/* pour centrer le calendrier */
+div.picker__holder {
+	margin: auto;
+}
+
+.barre-menu .select-input {
+	color: #FFFFFF!important;
+}
+
+.barre-menu {
+    height: auto;
+}
+
+.tabbar, .tabbar__button, .tabbar__label {
+	height: 35px;
+}
+.tabbar__button, .tabbar__label {
+	line-height: 35px!important;
+	font-size: 0.9em!important;
+	text-transform:none!important;
+}
+.tabbar__content {
+	top: 35px;
+}
+
+/* 1. On rend la colonne centrale transparente pour libérer le vitrail */
+.cadre {
+    background: transparent !important; 
+    width: 480px;
+    margin: 0 auto;
+    font-family: serif !important;
+    padding: 10px !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* 2. On redonne de la couleur et de la forme aux boutons (Lectures, Laudes, etc.) */
+.audio-office-full-button {
+    background-color: #8B4513 !important; /* Votre marron d'origine */
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 18px 15px !important;
+    margin: 12px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 60px !important;
+   }
+
+/* 3. On corrige les boutons des Communs (ceux qui étaient devenus blancs) */
+.communs-category-button, .communs-office-button {
+    background-color: #050525 !important; /* Bleu marine d'origine */
+    color: white !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 15px !important;
+    margin: 8px 0 !important;
+    display: flex !important;
+    min-height: 50px !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.6) !important;
+}
+
+/* 4. On s'assure que le texte sur les boutons est bien visible */
+.audio-office-full-button .center, 
+.button-text, 
+.communs-category-button .center, 
+.communs-office-button .center {
+    color: white !important;
+    font-weight: bold !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+}
+
+.bouton_date {
+	font-size: 0.9em;
+}
+
+.bouton_menu_g {
+	font-size: 1em;
+}
+
+.switch-latin {
+	text-align:right;
+	font-size: 0.8em!important;
+	font-style:italic!important;
+}
+
+.slider {
+	width:95%;
+	padding-left: 2.5%;
+}
+
+.nombre {
+	width: 3.5em;
+}
+
+h1, h2, h3 {
+	font-family:serif!important;
+}
+
+h1 {
+	font-size:1.1em!important;
+}
+
+h2 {
+	color:#BB0000;
+	text-transform:uppercase;
+	font-size:1em!important;
+	margin-top:2em!important;
+	font-weight:bold!important;
+}
+
+h2.cantique {
+	color:black;
+	text-transform:none;
+	font-weight:normal!important;
+	margin-bottom:0.6em!important;
+}
+
+h3 {
+	font-size: 1em!important;
+	font-weight: normal;
+}
+
+p {
+	text-align : justify;
+}
+
+.antienne {
+	font-size:0.9em;
+}
+
+p.ref {
+	font-size:0.9em;
+	text-align : right;
+	margin-top : 0em;
+}
+
+span.verset, .rouge {
+	color:#BB0000;
+}
+
+span.verset {
+	font-size:0.6em;
+	vertical-align:text-top;
+}
+
+.espace {
+	margin-left: 2em;
+}
+
+.center, .center p {
+	text-align: center;
+}
+
+.center p.antienne {
+	text-align: justify;
+}
+
+.droite {
+	text-align: right;
+}
+
+.espace-dessous {
+	margin-bottom:0.5em;
+}
+
+span.petit {
+	font-size:0.6em;
+}
+
+span.liturgie {
+	font-family: Liturgie;
+	font-weight: bold;
+	margin-right: 0.3em;
+}
+
+span.liturgie2 {
+	font-family: Liturgie;
+	font-size: 0.9em;
+}
+
+/* Style pour la barre du haut personnalisée */
+.custom-header {
+    background: linear-gradient(135deg, #8B0000, #B22222) !important;
+    color: #ecc9a3 !important;
+    font-style: normal !important;
+    font-weight: bold !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important;
+    padding: 12px 15px !important;
+    min-height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-bottom: none !important;
+}
+
+/* Ajustements de taille selon l'écran */
+
+@media (max-width: 767px) {
+    .custom-header .center {
+        font-size: 16px !important;
+    }
+}
+
+.custom-header .center {
+	color: white !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	height: 100% !important;
+}
+
+/* Styles pour les boutons audio sur la page d'accueil */
+.audio-office-full-button {
+    background: #8B4513; /* Marron sombre */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 18px 15px;
+    margin: 8px 0;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 60px;
+    }
+
+.audio-office-full-button:hover {
+    background: #654321; /* Marron sombre plus foncé */
+    transform: translateY(-3px);
+   }
+
+.audio-office-full-button:active {
+    transform: translateY(0);
+    }
+
+.audio-office-full-button .center {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 15px;
+    color: white;
+    width: 100%;
+    padding: 0 15px;
+    position: relative;
+}
+
+.button-text {
+    flex: 1;
+    text-align: left;
+}
+
+/* Styles pour les icônes de lecture - centrées */
+.play-icon {
+    font-size: 36px !important;
+    color: white !important;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+/* Styles pour les anciens boutons (maintenus pour compatibilité) */
+.audio-office-item {
+    position: relative;
+}
+
+.audio-office-label {
+    font-weight: bold;
+}
+
+.audio-play-button {
+    background: #0076ff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.audio-play-button:hover {
+    background: #031329;
+}
+
+.audio-play-button:active {
+    transform: scale(0.95);
+}
+
+.audio-play-button ons-icon {
+    font-size: 20px;
+}
+
+/* Styles pour les menus déroulants des communs */
+.communs-submenu {
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        margin-left: 0px !important; /* Pour bien centrer si besoin */
+        animation: slideDown 0.3s ease-out;
+    }
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.communs-category-header {
+    /* Couleur sombre (bleu très foncé/noir) avec 60% d'opacité */
+    background: rgba(5, 5, 37, 0.6) !important; 
+    
+    color: rgb(100, 178, 182) !important;
+    font-size: 19px !important;
+    
+    /* On resserre le cadre autour du texte */
+    display: inline-block !important;
+    padding: 6px 20px !important;
+    border-radius: 20px !important; /* Bords bien arrondis pour un style moderne */
+    
+    /* Centrage et espacement */
+    margin: 15px auto !important;
+    text-align: center !important;
+    
+    /* Optionnel : un léger flou derrière le cadre (effet Glassmorphism) */
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/* On s'assure que le conteneur Onsen n'interfère pas */
+ons-list-header {
+    background: transparent !important;
+    text-align: center !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.communs-category-button {
+    background: #050525; /* Bleu presque noir */
+    color: white !important;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+}
+
+.communs-category-button:hover {
+    background: #040448; /* Bleu marine au hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+}
+
+.communs-category-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.communs-category-button .center {
+    font-weight: bold;
+    color: white;
+    font-size: 16px;
+}
+
+.communs-office-button {
+    background: #0a0a4a; /* Bleu presque noir */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 50px;
+    position: relative;
+}
+
+.communs-office-button:hover {
+    background: #05052d; /* Bleu marine au hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+
+.communs-office-button:active {
+    transform: translateY(0);
+    box-shadow: 1px -1px 0px 0px rgba(255, 255, 255, 0.5) !important;
+}
+
+.communs-office-button .center {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    color: white;
+    font-size: 16px;
+    width: 100%;
+    padding: 0 15px;
+    position: relative;
+}
+
+/* Supprimer toutes les lignes, fonds blancs et bordures sur mobile et desktop */
+ons-list, 
+.list, 
+ons-list-item, 
+.list-item, 
+.list-item__center, 
+.list-item__background, 
+.list-item__bottom {
+    background-color: transparent !important; 
+    background: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    border-bottom: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+ons-list-item::after, 
+ons-list-item::before, 
+.list-item::after, 
+.list-item::before {
+    display: none !important;
+    content: none !important;
+    background-image: none !important;
+    border: none !important;
+}
+
+/* Assurer un arrière-plan transparent pour toute la page */
+body, ons-page, .page__content, .page__background {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* Supprimer les séparateurs de liste OnsenUI */
+.list__item {
+    border-bottom: none !important;
+}
+
+.list__item::after {
+    display: none !important;
+}
+
+/* Assurer un arrière-plan blanc pour toute la page */
+body {
+    background-color: transparent !important;
+}
+
+ons-page {
+    background-color: transparent !important;
+}
+
+/* Mode nuit - fond noir */
+body.dark-mode {
+    background-color: #121212 !important;
+}
+
+ons-page.dark-mode {
+    background-color: #121212 !important;
+}
+
+.dark-mode .audio-office-full-button {
+    background: #654321 !important; /* Marron plus sombre */
+}
+
+.dark-mode .communs-category-button,
+.dark-mode .communs-office-button {
+    background: #040427 !important; /* Bleu marine plus sombre */
+}
+
+.dark-mode .custom-header {
+    background: linear-gradient(135deg, #4B0000, #660000) !important; /* Rouge plus sombre */
+}
+
+/* Styles adaptatifs pour tablette et PC */
+/* Styles adaptatifs pour tablette et PC */
+@media (min-width: 768px) {
+    .custom-header {
+        font-size: 24px !important;
+        min-height: 70px !important;
+        font-weight: bold !important;
+    }
+
+    .audio-office-full-button {
+        padding: 25px 20px !important;
+        margin: 12px 0 !important;
+        min-height: 80px !important;
+       }
+
+    .audio-office-full-button .center {
+        font-size: 16px !important;
+    }
+
+    .play-icon {
+        font-size: 44px !important;
+    }
+
+    .communs-category-button,
+    .communs-office-button {
+        padding: 20px !important;
+        margin: 8px 0 !important;
+        min-height: 65px !important;
+    }
+
+    .communs-category-button .center,
+    .communs-office-button .center {
+        font-size: 20px !important;
+    }
+
+    ons-page .page__content {
+        padding-top: 40px !important; 
+    }
+    
+    ons-card {
+        margin-top: 30px !important;
+    }
+} /* <--- ACCOLADE DE FERMETURE DU BLOC 768px AJOUTÉE ICI */
+
+/* Styles spécifiques pour desktop (grands écrans) */
+@media (min-width: 1024px) {
+    .custom-header {
+        font-size: 32px !important; /* Augmenté pour être bien visible sur PC */
+        min-height: 80px !important;
+        background: linear-gradient(135deg, #8B0000, #B22222) !important;
+}
+    }
+
+    .audio-office-full-button {
+        padding: 30px 25px !important;
+        margin: 25px auto !important; /* Espacement vertical augmenté */
+        min-height: 100px !important;
+        max-width: 600px;
+        }
+
+    .audio-office-full-button .center {
+        font-size: 20px !important;
+    }
+
+    .play-icon {
+        font-size: 52px !important;
+    }
+
+    /* On s'assure que le contenu descend bien sur PC */
+    ons-page .page__content {
+        padding-top: 60px !important; 
+    }
+
+    .communs-category-button,
+    .communs-office-button {
+        padding: 25px !important;
+        margin: 15px auto !important;
+        min-height: 75px !important;
+        font-size: 20px !important;
+        max-width: 600px;
+    }
+
+
+/* Styles pour mobile (petits écrans) */
+@media (max-width: 767px) {
+    .custom-header {
+        font-size: 16px !important;
+     font-weight: bold !important;
+    }
+
+    .play-icon {
+        font-size: 32px !important;
+    }
+}
+/* Supprime les lignes horizontales résiduelles */
+.list-item__bottom, 
+.list-item--tappable__bottom,
+.list-item__center {
+    border-bottom: none !important;
+    background-image: none !important;
+}
+
+/* Supprime les soulignements dans les boutons s'il y en a */
+.audio-office-full-button, 
+.communs-office-button {
+    text-decoration: none !important;
+   }
+
+/* Supprime les bordures Onsen UI par défaut sur les listes */
+.list-item {
+    border: none !important;
+    background-image: none !important;
+}
+@media screen and (max-width: 480px) {
+    .cadre {
+        width: 95% !important; /* Laisse une petite marge pour voir le vitrail sur les bords */
+    }
+}
+/* 1. On cible uniquement le fond de la page et du contenu global */
+ons-page, .page__content, .page__background {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* 2. On rend transparentes les listes Onsen UI qui créent le voile blanc central */
+ons-list, .list, .list-item, .list-item__center {
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+}
+
+/* 3. MAIS on force le maintien du marron pour les boutons uniquement */
+.audio-office-full-button {
+    background-color: rgba(200, 206, 243, 0.2) !important;
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+ }
+
+/* 4. Idem pour le bleu des communs */
+.communs-category-button, .communs-office-button {
+    background-color: #0f0f58 !important;
+    opacity: 1 !important;
+}
+/* --- Correction du texte "Communs" --- */
+ons-list-header, 
+.list-header, 
+.communs-category-header,
+.communs-category-header * {
+    background-color: transparent !important;
+    color: white !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    text-transform: none !important;
+    display: block !important;
+    text-align: center !important;
+    text-shadow: none !important;
+}
+/* --- Style pour le titre Communs (v46 - Aligné à gauche) --- */
+#communs-menu-trigger .list-item__center {
+    /* Fond sombre et transparence */
+    background-color: rgba(5, 5, 37, 0.0) !important; 
+    background-image: none !important;
+    border: none !important;
+
+    /* Police et couleur */
+    color: white !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    
+    /* Alignement à GAUCHE */
+    display: flex !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    
+    /* Dimensions et marges */
+    padding: 6px 15px !important; 
+    border-radius: 12px !important;
+    margin: 10px 0 10px 10px !important; /* Décollé du bord gauche de 10px */
+    width: auto !important;
+    min-width: 90px;
+    display: inline-flex !important; /* Pour que le cadre s'adapte à la taille du mot */
+}
+
+/* Sécurité pour le texte à l'intérieur */
+#communs-menu-trigger .list-item__center,
+#communs-menu-trigger .list-item__center * {
+    color: white !important;
+    }
+    /* FORCE LA SUPPRESSION DE L'ESPACE BLANC SOUS LA BARRE */
+.page__content {
+    top: 0 !important;
+    padding-top: 44px !important; /* Taille exacte de la toolbar Onsen */
+    margin-top: 0 !important;
+}
+
+/* Sur PC, Onsen rajoute parfois 64px, on le réduit à la taille de la barre */
+@media (min-width: 768px) {
+    .page__content {
+        padding-top: 44px !important;
+    }
+}

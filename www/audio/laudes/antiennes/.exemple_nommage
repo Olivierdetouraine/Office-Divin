@@ -1,0 +1,23 @@
+# Exemples de nommage pour les fichiers audio des antiennes de laudes
+#
+# Les fichiers audio doivent avoir EXACTEMENT le même nom que les fichiers texte
+# Seule l'extension change : .html → .mp3
+#
+# Exemples de fichiers texte trouvés dans laudes/antiennes/ :
+# - antienne_1_1_1_1.html
+# - antienne_1_1_1_2.html
+# - antienne_1_3_15_1.html
+# - antienne_1_3_15_2.html
+#
+# Donc les fichiers audio correspondants seront :
+# - antienne_1_1_1_1.mp3
+# - antienne_1_1_1_2.mp3
+# - antienne_1_3_15_1.mp3
+# - antienne_1_3_15_2.mp3
+#
+# Pour déterminer quels fichiers créer pour une date donnée :
+# 1. Ouvrez l'application en mode texte
+# 2. Allez à la date souhaitée
+# 3. Ouvrez l'office (laudes par exemple)
+# 4. Notez tous les chemins des fichiers utilisés
+# 5. Créez les fichiers .mp3 correspondants

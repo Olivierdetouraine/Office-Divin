@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="description" content="Application Web pour l'affiche de la liturgie des heures (bréviaire) en Français">
+    <title>Office Divin</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" href="favicon.png" />
+    
+    <link rel="stylesheet" href="include/onsenui/onsenui.min.css">
+    <link id='css-onsen1' rel="stylesheet" href="include/onsenui/onsen-css-components.min.css">
+    <link id='css-onsen2' rel="stylesheet" href="include/onsenui/theme.css">
+    <link rel="stylesheet" href="include/pickadate/lh.css">
+    <link rel="stylesheet" href="include/pickadate/lh.date.css">
+    <link rel="stylesheet" href="include/slider/nouislider.min.css">
+    <link id='css-lh' rel="stylesheet" href="include/lh.css">
+
+    <script src="include/onsenui/onsenui.min.js"></script>
+    <script src="include/jquery-3.3.1.min.js"></script>
+    <script src="include/polyfill.min.js"></script>
+    <script src="include/pickadate/picker.js"></script>
+    <script src="include/pickadate/picker.date.js"></script>
+    <script src="include/pickadate/fr_FR.js"></script>
+    <script src="include/slider/nouislider.min.js"></script>
+    <script src="include/lh-psaumes.js"></script>
+    <script src="include/lh-calendrier.js"></script>
+    <script src="include/lh-ui.js"></script>
+    <script src="include/lh.js"></script>
+    <script src="include/audio-player.js"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // On ajoute un paramètre de version pour forcer la maj du cache
+                navigator.serviceWorker.register('service-worker.js?v=2').then(function(registration) {
+                    // Force la mise à jour si un nouveau service worker est trouvé
+                    registration.update();
+                });
+            });
+        }
+    </script>
+</head>
+<body>
+    <ons-splitter>
+        <ons-splitter-side id="menu-g" page="" side="left" width="200px" collapse swipeable></ons-splitter-side>
+        <ons-splitter-side id="menu" page="menu.html" side="right" width="200px" collapse swipeable></ons-splitter-side>
+        <ons-splitter-content id="content" page="accueil.html"></ons-splitter-content>
+    </ons-splitter>
+
+    <script>
+        Initialisation_parametres();
+        // Suppression du bloc DeviceReady inutile pour une PWA pure (non Cordova)
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "Office Divin",
+  "short_name": "Office Divin",
+  "start_url": "/",
+  "scope": "/" ,
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#BB0000",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

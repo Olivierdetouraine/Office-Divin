@@ -1,0 +1,50 @@
+<ons-page id='milieu'>
+	<ons-toolbar class='barre-menu'>
+		<div class="left bouton_menu_g" onclick="Ouvre_menu_g()">
+			<ons-icon icon="md-menu"></ons-icon>&nbsp;&nbsp;Milieu
+		</div>
+		<div class="center">
+			<div id="m_date" class="bouton_date"></div>
+		</div>
+		<div class="right">
+			<ons-toolbar-button onclick="Ouvre_menu()">
+				<ons-icon icon="md-settings"></ons-icon>
+			</ons-toolbar-button>
+		</div>
+	</ons-toolbar>
+
+	<ons-modal id='m_modal'>
+		<input type="text" id="m_calendrier" class="datepicker" name="m_calendrier" hidden/>
+	</ons-modal>
+
+	<ons-fab position="bottom right" modifier="mini" onclick="Plein_ecran();">
+		<ons-icon id='plein-ecran' icon="md-fullscreen"></ons-icon>
+	</ons-fab>
+
+	<ons-card class="cadre">
+		<div id="m_titre_principal" class="center"></div>
+		<div id="m_titre_sanctoral" class="center"></div>
+		<div id="m_titre_secondaire" class="center"></div>
+
+		<div id="m_temporal"></div>
+		<div id="m_sanctoral"></div>
+
+		<div id="m_select_hymne_div">
+			<br>
+			<p class="center">
+				<select class="select-input" name="m_select_hymne" id="m_select_hymne">
+					<option value="1">Tierce</option>
+					<option value="2">Sexte</option>
+					<option value="3">None</option>
+				</select>
+			</p>
+		</div>
+
+		<p class="center"><ons-button onclick="Charge_page('accueil.html')"><ons-icon icon="md-home"></ons-icon></ons-button></p>
+	</ons-card>
+
+	<script>
+		Initialisation_parametres();
+		Initialisation_evenements('milieu');
+	</script>
+</ons-page>

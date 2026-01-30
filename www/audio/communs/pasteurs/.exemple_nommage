@@ -1,0 +1,19 @@
+# Exemples de nommage pour les fichiers audio des communs
+#
+# Les fichiers audio doivent porter EXACTEMENT le même nom que les fichiers texte
+# mais dans la structure audio/communs/[categorie]/
+#
+# Structure des fichiers texte dans sanctoral/[categorie]/ :
+# - la_antienne_1.html → audio/communs/dedicace/antiennes/la_antienne_1.mp3
+# - la_antienne_2.html → audio/communs/dedicace/antiennes/la_antienne_2.mp3
+# - la_hymne.html → audio/communs/dedicace/hymnes/la_hymne.mp3
+# - la_capitule.html → audio/communs/dedicace/capitules/la_capitule.mp3
+# - l_lecture_1.html → audio/communs/dedicace/lectures/l_lecture_1.mp3
+# - etc.
+#
+# Les préfixes indiquent l'office :
+# - l_ = lectures
+# - la_ = laudes
+# - m_ = milieu
+# - v_ = vêpres
+# - v0_ = vêpres 0 (veille au soir)

@@ -1,0 +1,44 @@
+<ons-page id='complies'>
+	<ons-toolbar class='barre-menu'>
+		<div class="left bouton_menu_g" onclick="Ouvre_menu_g()">
+			<ons-icon icon="md-menu"></ons-icon>&nbsp;&nbsp;Complies
+		</div>
+		<div class="center">
+			<div id="c_date" class="bouton_date"></div>
+		</div>
+		<div class="right">
+			<ons-toolbar-button onclick="Ouvre_menu()">
+				<ons-icon icon="md-settings"></ons-icon>
+			</ons-toolbar-button>
+		</div>
+	</ons-toolbar>
+
+	<ons-modal id='c_modal'>
+		<input type="text" id="c_calendrier" class="datepicker" name="c_calendrier" hidden/>
+	</ons-modal>
+
+	<ons-fab position="bottom right" modifier="mini" onclick="Plein_ecran();">
+		<ons-icon id='plein-ecran' icon="md-fullscreen"></ons-icon>
+	</ons-fab>
+
+	<ons-card class="cadre">
+		<div id="c_titre_principal" class="center"></div>
+		<div id="c_titre_secondaire" class="center"></div>
+
+		<div id="c_option-div" style="display:none">
+			<br><p class="antienne rouge">Choisir une option&nbsp;:</p>
+			<select class="select-input" name="c_option" id="c_option">
+				<option value="8">Complies du dimanche</option>
+				<option value="7">Complies du samedi</option>
+			</select>
+			<br>
+		</div>
+
+		<p class="center"><ons-button onclick="Charge_page('accueil.html')"><ons-icon icon="md-home"></ons-icon></ons-button></p>
+	</ons-card>
+
+	<script>
+		Initialisation_parametres();
+		Initialisation_evenements('complies');
+	</script>
+</ons-page>
