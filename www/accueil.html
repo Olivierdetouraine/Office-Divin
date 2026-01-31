@@ -73,20 +73,19 @@
             color: white;
             text-align: center;
             font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
-            font-size: 14px;
-            margin-top: 5px;
+            font-size: 16px;
+            padding: 8px 0;
             font-style: italic;
+            background: transparent;
         }
     </style>
 
     <ons-toolbar class="barre-menu">
-        <div class="custom-header center" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <div id="header-title" style="color: white;"></div>
-            <div id="saint-title"></div>
-        </div>
+        <div class="custom-header center" id="header-title" style="color: white;"></div>
     </ons-toolbar>
 
-    <div style="max-width: 500px; margin: 0 auto; padding: 0 15px;"> 
+    <div style="max-width: 500px; margin: 0 auto; padding: 0 15px;">
+        <div id="saint-title"></div>
         
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; height: 40px;">
             <div id="btn-retour-home" onclick="resetToHome()" style="display: none; cursor: pointer;">
