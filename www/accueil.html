@@ -90,16 +90,13 @@
     </style>
 
     <ons-toolbar class="barre-menu">
-        <div class="custom-header center" id="header-title" style="color: #fffacd; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
-            <span id="office-title" style="font-family: 'Brush Script MT', 'Lucida Handwriting', cursive; font-size: 24px; font-weight: normal;"></span>
-            <span id="date-title" style="font-size: 13.6px; margin-top: 2px;"></span>
-        </div>
+        <div class="custom-header center" id="header-title" style="color: white;"></div>
     </ons-toolbar>
 
     <div style="max-width: 500px; margin: 0 auto; padding: 0 15px;">
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; height: 40px;">
             <div id="btn-retour-home" onclick="resetToHome()" style="display: none; cursor: pointer;">
-                <ons-icon icon="md-arrow-left" style="color: white; font-size: 28px;"></ons-icon>
+                <span style="color: white; font-size: 32px; font-family: 'Brush Script MT', 'Lucida Handwriting', cursive; line-height: 1;">←</span>
             </div>
             <div id="communs-menu-trigger" onclick="toggleCommunsMenu()" style="display: flex; align-items: center; cursor: pointer; margin-left: auto;">
                 <ons-icon icon="md-caret-down" style="color: white; font-size: 16px; margin-right: 8px;"></ons-icon>
@@ -160,9 +157,7 @@
 
         function updateHeaderTitle() {
             if (typeof Date_du_jour === "function") {
-                var dateComplete = Date_du_jour(new Date());
-                document.getElementById('office-title').textContent = "Office Divin";
-                document.getElementById('date-title').textContent = "du " + dateComplete;
+                document.getElementById('header-title').innerHTML = "Office Divin du " + Date_du_jour(new Date());
             }
         }
 
