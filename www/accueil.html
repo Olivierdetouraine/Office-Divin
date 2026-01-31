@@ -90,7 +90,10 @@
     </style>
 
     <ons-toolbar class="barre-menu">
-        <div class="custom-header center" id="header-title" style="color: white;"></div>
+        <div class="custom-header center" id="header-title" style="color: #fffacd; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
+            <span id="office-title" style="font-family: 'Brush Script MT', 'Lucida Handwriting', cursive; font-size: 24px; font-weight: normal;"></span>
+            <span id="date-title" style="font-size: 13.6px; margin-top: 2px;"></span>
+        </div>
     </ons-toolbar>
 
     <div style="max-width: 500px; margin: 0 auto; padding: 0 15px;">
@@ -157,7 +160,9 @@
 
         function updateHeaderTitle() {
             if (typeof Date_du_jour === "function") {
-                document.getElementById('header-title').innerHTML = "Office Divin du " + Date_du_jour(new Date());
+                var dateComplete = Date_du_jour(new Date());
+                document.getElementById('office-title').textContent = "Office Divin";
+                document.getElementById('date-title').textContent = "du " + dateComplete;
             }
         }
 
@@ -192,8 +197,7 @@
                         // Extraire le texte du titre et le type
                         var tempDiv = document.createElement('div');
                         tempDiv.innerHTML = html;
-                        
-                        // Récupérer le nom du saint
+                                               // Récupérer le nom du saint
                         var titleText = tempDiv.querySelector('h3 b');
                         if (titleText) {
                             document.getElementById('saint-title').textContent = titleText.textContent;
