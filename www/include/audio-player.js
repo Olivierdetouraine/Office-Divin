@@ -81,34 +81,42 @@ function preparerPlaylistDynamique(office) {
 // Convertir un chemin HTML en chemin audio
 function convertirHtmlVersAudio(fichierHtml) {
     if (!fichierHtml || fichierHtml === 'empty.html') return null;
+
+    // 1. On nettoie pour ne garder que le nom (ex: "psaume62" ou "NT3")
+    // On enlève les dossiers et l'extension .html
+    var nomSeul = fichierHtml.split('/').pop().replace('.html', '').trim();
     
-    // 1. On nettoie le nom (ex: "psaumes/94.html" devient "94")
-    var parties = fichierHtml.split('/');
-    var nomSeul = parties[parties.length - 1].replace('.html', '');
-    var dossierOriginal = parties.length > 1 ? parties[0] : '';
+    // On extrait les chiffres uniquement pour la reconstruction
+    var chiffres = nomSeul.replace(/[^0-9]/g, ''); 
 
     var cheminFinal = "";
 
-    // 2. CAS DES PSAUMES (ex: 50, 94, psaume118)
-    if (!isNaN(nomSeul) || nomSeul.indexOf('psaume') !== -1) {
-        var num = nomSeul.replace('psaume', '');
-        cheminFinal = "audio/psaumes/psaume" + num + ".opus";
+    // 2. Reconstruction logique selon le type de fichier
+    if (fichierHtml.includes('psaume') || (!isNaN(nomSeul) && nomSeul !== "")) {
+        // Cas des PSAUMES (chiffre seul ou contient "psaume")
+        cheminFinal = "audio/psaumes/psaume" + chiffres + ".opus";
     } 
-    // 3. CAS DES CANTIQUES (ex: NT2)
-    else if (fichierHtml.indexOf('cantiques/') !== -1) {
-        cheminFinal = "audio/cantiques/" + nomSeul + ".opus";
+    else if (nomSeul.startsWith('AT')) {
+        // CANTIQUES AT (Laudes)
+        cheminFinal = "audio/cantiques/AT" + chiffres + ".opus";
     } 
-    // 4. CAS DES OFFICES (laudes, vepres...)
-    else if (dossierOriginal !== '') {
-        cheminFinal = "audio/" + dossierOriginal + "/" + nomSeul + ".opus";
-    } 
-    // 5. PAR DÉFAUT
+    else if (nomSeul.startsWith('NT')) {
+        // CANTIQUES NT (Vêpres, Complies)
+        cheminFinal = "audio/cantiques/NT" + chiffres + ".opus";
+    }
     else {
-        cheminFinal = "audio/" + nomSeul + ".opus";
+        // HYMNES, ORAISONS, etc.
+        // On garde le dossier d'origine s'il existe (ex: "complies/hymne_1")
+        var dossier = fichierHtml.includes('/') ? fichierHtml.split('/')[0] : '';
+        if (dossier !== '' && dossier !== nomSeul) {
+            cheminFinal = "audio/" + dossier + "/" + nomSeul + ".opus";
+        } else {
+            cheminFinal = "audio/" + nomSeul + ".opus";
+        }
     }
 
-    // AJOUT DU SLASH INITIAL POUR ÉVITER LA 404
-    return "/" + cheminFinal;
+    // 3. On force l'URL absolue pour éviter les erreurs de chemin relatif
+    return window.location.origin + "/" + cheminFinal;
 }
 
 // Extraire un nom lisible du fichier

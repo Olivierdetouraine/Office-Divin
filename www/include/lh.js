@@ -854,6 +854,825 @@ function Formulaire_laudes (temps, semaine, jour, annee, date_jour, mois, jour_d
 		}
 	}
 
+// ces fonctions nécessitent le chargement préalable du fichier :
+// lh-psaumes.js
+// lh-calendrier.js
+
+// dates min/max Cendres / Pâques / Pentecôte
+	// 7 février 2103 / 25 mars / 13 mai
+	// 10 mars 2038 / 25 avril / 13 juin
+
+function Nom_du_jour (jour) {
+
+	switch(jour) {
+		case 0:
+			return 'Dimanche';
+			break;
+		case 1:
+			return 'Lundi';
+			break;
+		case 2:
+			return 'Mardi';
+			break;
+		case 3:
+			return 'Mercredi';
+			break;
+		case 4:
+			return 'Jeudi';
+			break;
+		case 5:
+			return 'Vendredi';
+			break;
+		case 6:
+			return 'Samedi';
+			break;
+	}
+} // fin de la fonction Nom_du_jour()
+
+function Commun_description (communs) {
+	// cette fonction traduit le nom court en description explicite
+	// pour les communs
+
+	switch(communs) {
+		case "dedicace":
+			return "Dédicace";
+			break;
+		case "marie":
+			return "Marie";
+			break;
+		case "apotres":
+			return "Apôtres";
+			break;
+		case "martyrs":
+			return "Plrs. martyrs";
+			break;
+		case "martyr":
+			return "Un martyr";
+			break;
+		case "pasteurs":
+			return "Pasteurs";
+			break;
+		case "docteurs1":
+			return "Docteurs-Pasteurs";
+			break;
+		case "docteurs2":
+			return "Docteurs-Saints";
+			break;
+		case "docteurs3":
+			return "Docteurs-Vierges";
+			break;
+		case "docteurs4":
+			return "Docteurs-Saintes";
+			break;
+		case "vierges":
+			return "Vierges";
+			break;
+		case "saints":
+			return "Saints";
+			break;
+		case "saintes":
+			return "Saintes";
+			break;
+		case "religieux":
+			return "Religieux";
+			break;
+		case "religieuses":
+			return "Religieuses";
+			break;
+		case "caritatifm":
+			return "Act. caritative (M)";
+			break;
+		case "caritatiff":
+			return "Act. caritative (F)";
+			break;
+		case "educateur":
+			return "Éducateur";
+			break;
+		case "defunts":
+			return "Défunts";
+			break;
+	}
+	return;
+
+} // fin de la fonction // Commun_description
+
+function Romain(nombre) { // convertit le numéro de semaine en nombre romain
+
+	var nb_romain = "";
+	for (var i=1; i <= nombre; i++) {
+		nb_romain = nb_romain+'I';
+	}
+	if (nombre==4)
+		nb_romain = 'IV';
+	return nb_romain;
+
+} // fin de la fonction Romain()
+
+function Sleep(milliSeconds){
+	var startTime = new Date().getTime();
+	while (new Date().getTime() < startTime + milliSeconds);
+} //fin de la fonction Sleep()
+
+function TailleTexte(valeur, sens) {
+	// cette fonction renvoi un tableau avec la taille du texte
+	// inférieure (sens=-1) / supérieure (sens=1) à la valeur fournie.
+
+	var taille=[90, 100, 110, 120, 140, 160, 200];
+	valeur = parseInt (valeur);
+
+	var i=0;
+	while (i<6) {
+		if (valeur==taille[i]) {
+			break;}
+		i++;
+	}
+	if (i>0 && sens==-1) {
+		i--;}
+	if (i<6 && sens==1) {
+		i++;}
+
+	return taille[i]+'%';
+
+} // fin de la fonction TailleTexte()
+
+function AgrandirTexte() {
+	var taille_texte = document.body.style.fontSize;
+	taille_texte = TailleTexte (taille_texte, 1);
+	localStorage.setItem('taille_texte', taille_texte);
+	$("body").css('font-size', taille_texte);
+}
+
+function RetrecirTexte() {
+	var taille_texte = document.body.style.fontSize;
+	taille_texte = 	TailleTexte (taille_texte, -1);
+	localStorage.setItem('taille_texte', taille_texte);
+	$("body").css('font-size', taille_texte);
+}
+
+function Semaine_psautier (semaine) {
+	// renvoie la semaine du psautier
+	// Rq : si semaine=0, on renvoit 4 (ce qui est normal,
+	// c'est le cas des jours juste après les Cendres ou Noël)
+
+	var semaine_p = semaine % 4;
+	if (semaine_p == 0) {
+		semaine_p = 4;
+	}
+	return semaine_p;
+} // fin de la fonction Semaine_psautier()
+
+function Antienne_temps_pascal(label) {
+	// Cette fonction ajoute un 'b' à la fin du label quand le label est une antienne
+	// et que nous sommes dans le temps pascal. Elle sert pour le sanctoral, pour
+	// sélectionner les antiennes avec/sans alléluia, selon qu'on est dans le TP ou non.
+	var suffixe = '';
+	if (sessionStorage.temps_liturgique == 5) {
+		suffixe = 'b';
+	}
+	var label2 = label;
+	if (label2.search('antienne')>-1) {
+		label2 = label + suffixe;
+	}
+	return label2;
+}
+
+function Date_du_jour (date_jour) {
+	// renvoie une chaîne de caractère avec la date du jour
+	// au format jour n° mois année (eg. Lundi 2 février 2016)
+
+	date_str = date_jour.toLocaleDateString("fr", {weekday: "long", year: "numeric",
+		month: "long", day: "numeric"});
+	if (date_jour.getDate() ==1) // le premier du mois on ajoute le "er" à 1 !
+		date_str = date_str.replace(" 1 ", " 1er ");
+	return date_str[0].toUpperCase() + date_str.slice(1);;
+
+} // fin de la fonction Date_du_jour()
+
+function Titre_secondaire (annee, temps, semaine, semaine_p, date_jour) {
+	// renvoi le texte à afficher dans le div #?_titre_secondaire
+	// ie la semaine et le temps liturgique, l'année et la semaine du psautier
+	// (eg. 12e semaine du temps ordinaire - Année A - sem. ps. IV)
+	var temps_lit = Array();
+	temps_lit [1] = 'de l\'Avent';
+	temps_lit [2] = 'de la Nativit&eacute;';
+	temps_lit [3] = 'ordinaire';
+	temps_lit [4] = 'du Car&ecirc;me';
+	temps_lit [5] = 'de P&acirc;ques';
+
+	if (semaine == 1) {
+		semaine = semaine + '<sup>re</sup>';
+	} else {
+		semaine = semaine + '<sup>e</sup>';
+	}
+	if (temps==2) { // pendant le temps de Noël il n'y a pas la notion de semaine
+		return '<p><i><b>Temps '+temps_lit[temps]+'</b><br>(Ann&eacute;e '+annee+' - sem. ps. '+Romain(semaine_p)+')</i></p>';
+
+	} else if (temps==4) { // Carême - le Mercredi des Cendres et les jours suivants
+		var cendres = Nb_jours(Cendres(date_jour.getFullYear()), date_jour);
+		if (cendres < 4) {
+			switch(cendres) {
+				case 0:
+					return '<p><b><i>Mercredi des Cendres</i></b></p>';
+					break;
+				case 1:
+					return '<p><b><i>Jeudi après les Cendres</i></b></p>';
+					break;
+				case 2:
+					return '<p><b><i>Vendredi après les Cendres</i></b></p>';
+					break;
+				case 3:
+					return '<p><b><i>Samedi après les Cendres</i></b></p>';
+					break;
+			}
+		}
+		if (semaine === '6<sup>e</sup>') {
+			return '<p><i><b>Semaine Sainte</b><br>(Ann&eacute;e '+annee+' - sem. ps. '+Romain(semaine_p)+')</i></p>';
+		}
+	} else if (temps==5) {
+		if (semaine === '1<sup>re</sup>') {
+			return '<p><i><b>Octave de Pâques</b><br>(Ann&eacute;e '+annee+' - sem. ps. '+Romain(semaine_p)+')</i></p>';
+		}
+	}
+
+	return '<p><i>'+semaine+' semaine du <b>temps '+temps_lit[temps]+'</b><br>(Ann&eacute;e '+annee+' - sem. ps. '+Romain(semaine_p)+')</i></p>';
+
+} // fin de la fonction Titre_secondaire()
+
+function Fichier_sanctoral (date_jour, office, preseance, premieres_vepres) {
+	// renvoi le chemin vers le fichier du sanctoral, pour la date et l'office demandés
+	// ne sert que pour les fetes mobiles
+	// office : lectures; laudes; milieu; vepres.
+
+	var annee=date_jour.getFullYear();
+	var mois=date_jour.getMonth()+1;
+	if (mois<10) {
+		mois='0'+mois;
+	}
+	var jour_du_mois=date_jour.getDate();
+	if (jour_du_mois<10) {
+		jour_du_mois='0'+jour_du_mois;
+	}
+
+	if (premieres_vepres) {
+		office = office + '0';
+	}
+
+	if (preseance==2)  {
+		// Epiphanie
+		if (Nb_jours(date_jour, Epiphanie(annee)) == 0) {
+			return 'sanctoral/01/E-'+office+'.html';
+		}
+	}
+
+	if (preseance==3.1) { // on fête une solennité mobile
+		// Saint Joseph
+		if (Nb_jours(date_jour, SaintJoseph(annee)) == 0) {
+			return 'sanctoral/03/19-'+office+'.html';
+		}
+		// Annociation
+		if (Nb_jours(date_jour, Annonciation(annee)) == 0) {
+			return 'sanctoral/03/25-'+office+'.html';
+		}
+		// Trinité
+		if (Nb_jours(date_jour, Trinite(annee)) == 0) {
+			return 'sanctoral/paques/ST-'+office+'.html';
+		}
+		// Saint Sacrement
+		if (Nb_jours(date_jour, SaintSacrement(annee)) == 0) {
+			return 'sanctoral/paques/SS-'+office+'.html';
+		}
+		// Sacré Coeur
+		if (Nb_jours(date_jour, SacreCoeur(annee)) == 0) {
+			return 'sanctoral/paques/SC-'+office+'.html';
+		}
+		// Christ-Roi
+		if (Nb_jours(date_jour, ChristRoi(annee)) == 0) {
+			return 'sanctoral/11/CR-'+office+'.html';
+		}
+		// Immanculée Conception
+		if (Nb_jours(date_jour, ImmaculeeConception(annee)) == 0) {
+			return 'sanctoral/12/08-'+office+'.html';
+		}
+	}
+	if (preseance==3.2) {
+		// Saint Jean-Baptiste
+		if (Nb_jours(date_jour, SaintJeanB(annee)) == 0) {
+			return 'sanctoral/06/24-'+office+'.html';
+		}
+		// Saints Pierre & Paul
+		if (Nb_jours(date_jour, SaintPierrePaul(annee)) == 0) {
+			return 'sanctoral/06/29-'+office+'.html';
+		}
+	} // fin des solennités mobiles
+
+	if (preseance==5.1) { // on a une fête mobile (Sainte Famille)
+		// Sainte Famille
+		if (Nb_jours(date_jour, SteFamille(annee)) == 0) {
+			return 'sanctoral/12/SF-'+office+'.html';
+		}
+		// Baptême du Seigneur
+		if (Nb_jours(date_jour, Bapteme(annee)) == 0) {
+			return 'sanctoral/01/B-'+office+'.html';
+		}
+	} // fin des fêtes mobiles
+
+	// Diocèse de Lille : ND de la Treille
+	if (sessionStorage.sanctoral_local === '_lille') {
+		if (preseance == 8.1) {
+			return 'sanctoral/05/NDT-'+office+'_lille.html';
+		}
+	}
+
+	// Diocèse de Lyon : ND de Fourvière
+	if (sessionStorage.sanctoral_local === '_lyon') {
+		if (preseance == 8.1) {
+			return 'sanctoral/05/NDF-'+office+'_lyon.html';
+		}
+	}
+
+	// on gère maintenant les mémoires mobiles
+	if (preseance==9.9) {
+		// Coeur immaculée de Marie
+		if (Nb_jours(date_jour, SacreCoeur(annee)) == -1) {
+			return 'sanctoral/paques/CI-'+office+'.html';
+		}
+		// Marie Mère de l'Eglise
+		if (Nb_jours(date_jour, Pentecote(annee)) == -1) {
+			return 'sanctoral/paques/MME-'+office+'.html';
+		}
+	}
+
+	return 'sanctoral/'+mois+'/'+jour_du_mois+'-'+office+sessionStorage.sanctoral_local+'.html';
+} // fin de la fonction Fichier_sanctoral()
+
+function Charge_fichier(label, fichier) {
+	// Cette fonction charge le fichier spécifié en paramètre
+	// dans le div dont l'id est spécifié dans label (#id)
+	// elle détecte automatiquement une antienne et la répète si nécessaire
+
+	$(label).load(fichier);
+	repeter = (localStorage.getItem("repeter_antiennes") === 'true');
+	if (label.search('antienne')>-1 && repeter) { // on repète l'antienne si nécessaire
+		$(label+'b').load(fichier);
+	}
+}	// fin de la fonction Charge_fichier()
+
+function Charge_label_txt(label) {
+	// Remplit la div correspondant au label avec le code html
+	// contenu dans la variable de session correspondante.
+
+	$('#'+label).html(sessionStorage.getItem(label));
+
+} // fin de la fonction Charge_label_txt()
+
+function Charge_hymne(office) {
+	// Remplit la div de l'hymne en détectant si l'on affiche simplement
+	// une hymne où s'il faut afficher l'interface de sélection des hymnes
+	// en dehors du temps ordinaire.
+
+	var fichier = sessionStorage.getItem(office+'hymne');
+
+	if (fichier.search('select')>-1) {
+		var suffixe = fichier.substr(7);
+
+		$('#'+office+'hymne').html('');
+		$('#'+office+'select-hymne-div').show();
+		$('#'+office+'select-hymne').load('hymnes/hymnes_'+suffixe+'.html', function() {
+		});
+		var hymne="";
+		$('#'+office+'select-hymne').val(hymne).attr('selected', 'selected');
+		$('#'+office+'select-hymne').bind('change', function (event) {
+			hymne=$('#'+office+'select-hymne option:selected').val();
+			localStorage.setItem('select-hymne', hymne);
+			$('#'+office+'hymne').load('hymnes/'+hymne+'.html');
+		});
+	} else {
+		$('#'+office+'select-hymne-div').hide();
+		Charge_label(office+'hymne');
+	}
+
+} // fin de la fonction Charge_hymne()
+
+function Charge_label(label) {
+	// Remplit la div correspondant au label avec le fichier
+	// indiqué dans la variable de session correspondante.
+	// elle détecte automatiquement une antienne et la répète si nécessaire
+	// elle intégre l'affichage du titre du psaume
+
+	var fichier = sessionStorage.getItem(label);
+
+	// on insère le titre automatiquement pour Ps et Ct (ça simplifie le code pour le sanctoral)
+	if (label.search('psaume')>-1) {
+		var label_titre = label.replace("psaume", "titre_psaume");
+		if (fichier.length>0) {
+			$('#'+label_titre).load('psaumes/psaume' + fichier + '_titre.html');
+			fichier = 'psaumes/psaume'+fichier+'.html';
+		} else {
+			$('#'+label_titre).html('');
+		}
+	}
+	if (label === 'la_cantique') {
+		if (fichier.length>0) {
+			$('#la_titre_cantique').load('cantiques/AT' + fichier + '_titre.html');
+			fichier = 'cantiques/AT'+fichier+'.html';
+		} else {
+			$('#la_titre_cantique').html('');
+		}
+	}
+	if (label === 'v_cantique') {
+		if (fichier.length>0) {
+			$('#v_titre_cantique').load('cantiques/NT' + fichier + '_titre.html');
+			fichier = 'cantiques/NT'+fichier+'.html';
+		} else {
+			$('#v_titre_cantique').html('');
+		}
+	}
+
+	if (fichier === '') {
+		fichier = 'empty.html';
+	}
+
+	$('#'+label).load(fichier);
+
+	repeter = (localStorage.getItem("repeter_antiennes") === 'true');
+	if (label.search('antienne')>-1 && repeter) { // on repète l'antienne si nécessaire
+		$('#'+label+'b').load(fichier);
+	}
+	if (label.search('tedeum')>-1) {
+		if (sessionStorage.l_tedeum.length > 0) {
+			$('#l_tedeum_div').show();
+		} else {
+			$('#l_tedeum_div').hide();
+		}
+	}
+
+} // fin de la fonction Charge_label()
+
+function Prefixe_office(office) {
+	// renvoie le préfixe des labels pour l'office demandé
+
+	switch(office) {
+		case 'lectures':
+			return 'l_';
+			break;
+		case 'laudes':
+			return 'la_';
+			break;
+		case 'milieu':
+			return 'm_';
+			break;
+		case 'vepres':
+			return 'v_';
+			break;
+		case 'complies':
+			return 'c_';
+			break;
+	}
+} // fin de la fonction Prefixe_office()
+
+function Labels_office(office) {
+	// renvoie un tableau avec la liste des noms des labels
+	// à compléter pour l'office demandé en paramètre
+
+	switch(office) {
+		case 'lectures':
+			return ['titre_sanctoral', 'introduction', 'hymne', 'antienne_1', 'psaume_1', 'antienne_2', 'psaume_2', 'antienne_3', 'psaume_3',
+				'verset', 'lecture', 'patristique', 'tedeum', 'oraison', 'temporal'];
+			break;
+		case 'laudes':
+			return ['titre_sanctoral', 'introduction', 'antienne_inv', 'hymne', 'antienne_1', 'psaume_1','antienne_2', 'psaume_2', 'antienne_cantique', 'cantique',
+				'capitule', 'repons', 'antienne_ev', 'antienne_ev2', 'titre_cantique_ev', 'cantique_ev',
+				'intercession', 'oraison', 'temporal', 'sanctoral'];
+			break;
+		case 'milieu':
+			return ['titre_sanctoral', 'introduction', 'antienne_1', 'psaume_1', 'antienne_2', 'psaume_2', 'antienne_3', 'psaume_3',
+				'capitule1', 'repons1', 'oraison1', 'capitule2', 'repons2', 'oraison2', 'capitule3',
+				'repons3', 'oraison3', 'temporal', 'sanctoral'];
+			break;
+		case 'vepres':
+			return ['titre_sanctoral', 'introduction', 'hymne', 'antienne_1', 'psaume_1', 'antienne_2', 'psaume_2', 'antienne_cantique', 'cantique',
+				'capitule', 'repons', 'antienne_ev', 'antienne_ev2', 'titre_cantique_ev', 'cantique_ev',
+				'intercession', 'oraison', 'temporal', 'sanctoral'];
+			break;
+		case 'complies':
+			return ['hymne', 'introduction', 'antienne_1', 'psaume_1', 'antienne_2', 'psaume_2', 'capitule','repons',
+				'titre_cantique_ev', 'antienne_ev', 'cantique_ev', 'oraison', 'benediction'];
+			break;
+	}
+} // fin de la fonction Labels_office()
+
+function Init_formulaire (office) {
+	// efface les variable asssociées au formulaire de l'office
+
+	var prefixe = Prefixe_office(office);
+	var labels_communs = ['titre_principal', 'titre_secondaire'];
+	var labels_office = Labels_office(office);
+
+	for (var i=0; i < labels_communs.length; i++) {
+		sessionStorage.setItem(prefixe + labels_communs[i], '');
+	}
+	for (var i=0; i <labels_office.length; i++) {
+		sessionStorage.setItem(prefixe + labels_office[i], '');
+	}
+	// on efface alors toutes les données précédentes
+	Charge_tout(office);
+
+} // fin de la fonction Init_formulaire()
+
+function Init_option (office) {
+	// le paramètre est le nom de l'office
+	// cette fonction réinitialise la sélection des options
+	// pour les laudes et les vêpres (pour les mémoires)
+
+	var prefixe = Prefixe_office(office);
+
+	if (office === 'complies') { 
+		// pour les complies, le contenu n'est pas dynamique, donc c'est plus simple
+		// il suffit de masque l'affiche des options (ne sert qu'en temps de Noël)
+		$('#'+prefixe+'option-div').hide();
+	} else {
+		// pour les laudes et les vêpres il faut vider le contenu du <select>
+		$('#'+prefixe+'option-div').hide(); // on masque par défaut l'affichage des options
+		$('#'+prefixe+'option').find('option').remove(); // on vide le contenu du select avant de mettre la valeur par défaut
+		$('#'+prefixe+'option').append('<option value="0" selected=selected>Propre du sanctoral</option>');
+	}
+
+} // fin de la fonction Init_option()
+
+function Affiche_option (office, communs) {
+
+	var prefixe = Prefixe_office(office);
+
+	// activer les options
+	$('#'+prefixe+'option-div').show();
+
+	if (office === 'complies') {
+		$('#'+prefixe+'option').bind('change', function (event) {
+			var jour = $('#'+prefixe+'option option:selected').val();
+			Remplir_office(office);
+		});
+	} else {
+
+		// TODO : pour l'instant, on ne gère que le cas où il n'y a qu'un saint proposé
+		// on prend les valeurs du commun pour le premier saint, seulement
+		for (var i = 0; i < communs[0].length; i++) {
+			commun = communs[0][i];
+			commun_desc = Commun_description(commun);
+			$('#'+prefixe+'option').append('<option value="'+commun+'">Propre + commun ('+commun_desc+')</option>');
+		}
+
+		//		$('#'+prefixe+'option').selectmenu('refresh',true);
+
+		$('#'+prefixe+'option').bind('change', function (event) {
+			var commun = $('#'+prefixe+'option option:selected').val();
+			if (commun === "0") {
+				Remplir_office(office);	
+			} else {
+				if (office === 'laudes') { // il n'y a l'invitatoire que pour les laudes
+					sessionStorage.setItem (prefixe+'antienne_inv', 'sanctoral/'+commun+'/'+prefixe+'antienne_inv.html');
+				}
+				sessionStorage.setItem (prefixe+'hymne', 'sanctoral/'+commun+'/'+prefixe+'hymne.html');
+				sessionStorage.setItem (prefixe+'capitule',  'sanctoral/'+commun+'/'+prefixe+'capitule.html');
+				sessionStorage.setItem (prefixe+'repons', 'sanctoral/'+commun+'/'+prefixe+'repons.html');
+				sessionStorage.setItem (prefixe+'antienne_ev', 'sanctoral/'+commun+'/'+prefixe+'antienne_ev.html');
+				sessionStorage.setItem (prefixe+'intercession', 'sanctoral/'+commun+'/'+prefixe+'intercession.html');
+				Termine_office(office, true);
+			}
+
+		});
+	}
+
+} // fin de la fonction Affiche_option()
+
+function Charge_tout (office) {
+	// charge toutes les informations à partir des données présentes
+	// dans les variables de session
+	var prefixe = Prefixe_office(office);
+	var labels_communs = ['titre_principal', 'titre_secondaire'];
+
+	var labels_office = Labels_office(office);
+
+	// les valeurs communes en premier
+	for (var i=0; i < labels_communs.length; i++) {
+		Charge_label_txt(prefixe + labels_communs[i]);
+		if (office === 'vepres') {
+			Charge_label_txt('v_premieres_vepres');
+		}
+	}
+	// puis les valeurs de l'office
+	for (var i=0; i < labels_office.length; i++) {
+		if (labels_office[i] === 'hymne') {
+			Charge_hymne(prefixe);
+		} else {
+			Charge_label(prefixe + labels_office[i]);
+		}
+	}
+} // fin de la fonction Charge_tout()
+function Termine_office (office, affiche_sanctoral) {
+    var prefixe = Prefixe_office(office);
+
+    if (sessionStorage.getItem(prefixe+'temporal').length > 0) {
+        $('#'+prefixe+'temporal').load(sessionStorage.getItem(prefixe+'temporal'), function() {Charge_tout(office);} );
+    } else if (affiche_sanctoral) {
+        $('#'+prefixe+'sanctoral').load(sessionStorage.getItem(prefixe+'sanctoral'), function() {Charge_tout(office);} );
+    } else {
+        Charge_tout(office);
+    }
+
+    // Bloc de lancement Audio avec tes logs de debug
+    console.log('=== DEBUT Termine_office - office:', office);
+    console.log('=== Type de preparerPlaylistDynamique:', typeof preparerPlaylistDynamique);
+
+    setTimeout(function() {
+        console.log('=== DANS setTimeout - Tentative pour:', office);
+        if (typeof preparerPlaylistDynamique === 'function') {
+            console.log('=== Appel de preparerPlaylistDynamique ok');
+            preparerPlaylistDynamique(office);
+        } else {
+            console.error('=== ERREUR: La fonction preparerPlaylistDynamique n\'existe pas !');
+        }
+    }, 800);
+} // Fin UNIQUE de la fonction
+
+ // fin de la fonction Termine()
+
+function Formulaire_lectures (temps, semaine, jour, annee, date_jour, mois, jour_du_mois, preseance, preseance_sanctoral) {
+	var semaine_p = Semaine_psautier(semaine);
+	// permet de garder la valeur initiale de semaine quand on effectura la modification semaine = semaine_p
+	var semaine0 = semaine;
+	var psaumes = Psaumes ('lectures', temps, semaine, jour, semaine_p);
+
+	var affiche_sanctoral = false;
+	if (preseance_sanctoral < preseance) {
+		affiche_sanctoral = true;
+	}
+
+	// on commence par les deux lectures et l'oraison qui sont propres à la semaine	même en TO
+	sessionStorage.l_lecture = 'lectures/lectures/lecture_'+temps+'_'+semaine+'_'+jour+'.html';
+	sessionStorage.l_patristique = 'lectures/patristiques/patristique_'+temps+'_'+semaine+'_'+jour+'.html';
+	sessionStorage.l_oraison = 'lectures/oraisons/oraison_'+temps+'_'+semaine+'_'+jour+'.html';
+
+	if (temps==3) { // pour le TO, on utilise la semaine du psautier pour les autres valeurs
+		semaine=semaine_p;
+	}
+	sessionStorage.l_hymne = 'lectures/hymnes/hymne_'+temps+'_'+semaine+'_'+jour+'.html';
+	sessionStorage.l_verset = 'lectures/versets/verset_'+temps+'_'+semaine+'_'+jour+'.html';
+
+	// en Carême à partir de la deuxième semaine, la lecture patristique du dimanche dépend de l'année (A, B ou C)
+	if ((temps==4) && (jour==0) && (semaine>2) && (semaine<6)) {
+		sessionStorage.l_patristique = 'lectures/patristiques/patristique_'+temps+'_'+semaine+'_'+jour+annee+'.html';
+	}
+	// spécificité du Temps pascal, sauf Octave, Ascension et Pentecôte
+	if (temps==5 && semaine >1 && !(semaine==2 && jour==0) && !(semaine==6 && jour==4) && !(semaine == 8)) {
+		sessionStorage.l_verset = 'lectures/versets/verset_5_'+jour+'.html'; // on a le	même verset pour chaque semaine
+	}
+
+	for (var i=1; i <= 3; i++) { // on ajoute les psaumes et leur antienne
+		sessionStorage.setItem('l_antienne_'+i, 'lectures/antiennes/antienne_'+temps+'_'+semaine+'_'+jour+'_'+i+'.html');
+		sessionStorage.setItem('l_psaume_'+i, psaumes[i-1]);
+	}
+
+	// temps spécifique : cas particuliers
+	if (temps==1) { // gestion des Féries de l'Avent
+		if (mois==12 && jour_du_mois > 16) { // semaine avant Noël
+			if (jour==0) {
+				sessionStorage.l_lecture = 'sanctoral/12/F'+jour_du_mois+'-l_lecture.html';
+				sessionStorage.l_patristique = 'sanctoral/12/F'+jour_du_mois+'-l_patristique.html';
+			} else {
+				sessionStorage.l_temporal = 'sanctoral/12/F'+jour_du_mois+'-lectures.html';
+			}
+		}
+	}
+
+	if (temps==2) { // gestion du temps de Noël
+		if (mois==12 && jour_du_mois > 28) { // on est dans l'octave
+			// le cas de la Sainte Famille est traité comme pour les solennités mobiles (IC, ...)
+			sessionStorage.l_temporal = 'sanctoral/12/N'+jour_du_mois+'-lectures.html';
+		} else if (mois == 1 && Nb_jours(date_jour, Epiphanie(date_jour.getFullYear())) > 0) { // jours avant l'Epiphanie
+			sessionStorage.l_temporal = 'sanctoral/01/J'+jour_du_mois+'-lectures.html';
+		}
+	} // fin de la gestion du temps de Noël
+
+	if (temps==4 && semaine==6) { // gestion de la Semaine Sainte
+		sessionStorage.l_temporal = 'sanctoral/careme/S'+jour+'-lectures.html';
+	}
+
+	if (temps==5) { // gestion du temps pascal
+		if (semaine==1 || (semaine==2 && jour==0)) { // gestion de l'octave pascale
+			var jour_b = jour;
+			if (semaine==2) {
+				jour_b = 7;
+			}
+			sessionStorage.l_temporal = 'sanctoral/paques/O'+jour_b+'-lectures.html';
+		}
+		if (semaine==6 && jour==4) { // Ascension
+			sessionStorage.l_temporal = 'sanctoral/paques/A-lectures.html';
+		}
+		if (semaine==8 && jour==0) { // Pentecôte
+			sessionStorage.l_temporal = 'sanctoral/paques/P-lectures.html';
+		}
+	}
+
+	// gestion de la selection des hymnes pour les temps particuliers
+	if (temps!=3) {
+		var tempsh = temps;
+		if (temps == 2 && semaine0 >1) { // on est après l'Epiphanie (2e semaine)
+			tempsh = '2b';
+		}
+		if (temps == 4 && semaine0 >4) { // on est dans le temps de la Passion
+			tempsh = '4b';
+		}
+		if (temps==5 && date_jour>Ascension(date_jour.getFullYear())) { // hymnes à l'ES après l'Ascension
+			tempsh = '5a';
+		}
+		sessionStorage.l_hymne = 'select_'+tempsh;
+	}
+
+	// on gère maintenant l'affichage du Te Deum
+
+	if (date_jour==0) { // on est dans le cas où l'on demande un office personnalisé
+		var tedeum = false;
+		if (jour ==0) {
+			tedeum = true;
+		}
+	} else {
+
+		// on a le Te Deum à partir des fêtes (preseance <9, car il y a aussi des 8.1)
+		var tedeum = (Math.min(preseance,preseance_sanctoral) < 9);
+		// pas de Te Deum les dimanches de Carême et le jour des défunts (2 nov. si ça n'est pas un dimanche)
+		// ou pour le Mercredi des cendres ou la Semaine Sainte
+		if ((temps == 4 && jour ==0) || (date_jour.getDate()==2 && date_jour.getMonth()==10 && jour>0)
+			|| (temps ==4 && semaine == 0 && jour ==3) || (temps==4 && semaine==6)) {
+			tedeum = false;
+		}
+		// Te Deum pendant l'octave de Noël
+		if (temps == 2 && mois == 12 ) {
+			tedeum = true ;
+		}
+	}
+
+	if (tedeum) {
+		sessionStorage.l_tedeum = 'lectures/tedeum.html';
+	}
+
+	return affiche_sanctoral;
+
+} // fin de la fonction Formulaire_lectures
+
+function Formulaire_laudes (temps, semaine, jour, annee, date_jour, mois, jour_du_mois,	preseance, preseance_sanctoral) {
+	var semaine_p = Semaine_psautier(semaine);
+	var semaine0 = semaine; // permet de garder la valeur de semaine quand semaine = semaine_p
+	var psaumes = Psaumes ('laudes', temps, semaine, jour, semaine_p);
+
+	var affiche_sanctoral = false;
+	Init_option('laudes');
+
+	// TODO : traiter le cas des mémoires facultatives (preseance 12)
+	if (preseance_sanctoral < preseance && preseance_sanctoral<12) {
+		affiche_sanctoral = true;
+	}
+
+	$('#la_psaume_inv94').load('psaumes/psaume94.html');
+	$('#la_psaume_inv66').load('psaumes/psaume66.html');
+	$('#la_psaume_inv99').load('psaumes/psaume99.html');
+	$('#la_psaume_inv23').load('psaumes/psaume23.html');
+
+	// on commence le temps ordinaire et ses spécificités (oraison et antienne du Benedictus propre à l'année
+	if (temps==3) {
+		if (jour==0) { // le dimanche, l'oraison est propre à la semaine et est commune à l'office des lectures
+			sessionStorage.la_oraison = 'lectures/oraisons/oraison_'+temps+'_'+semaine+'_'+jour+'.html';
+			// et on ajoute l'antienne du Benedictus propre à l'année
+			if (!affiche_sanctoral) { // on n'affiche l'antienne propre que s'il n'y a pas une fête qui prime
+				sessionStorage.la_antienne_ev2 = 'laudes/antiennes/antienne_'+temps+'_'+semaine+'_'+jour+'_ev'+annee+'.html';
+			}
+		} else {
+			sessionStorage.la_oraison = 'laudes/oraisons/oraison_'+temps+'_'+semaine_p+'_'+jour+'.html';
+		}
+		// pour le reste, ça sera comme les autres temps, mais avec la semaine du psautier
+		semaine = semaine_p;
+
+	} else { // on renseigne maintenant l'oraison pour les autres temps
+		sessionStorage.la_oraison = 'lectures/oraisons/oraison_'+temps+'_'+semaine+'_'+jour+'.html';
+	}
+
+	sessionStorage.la_antienne_inv = 'laudes/antiennes/antienne_'+temps+'_'+semaine+'_'+jour+'_inv.html';
+	sessionStorage.la_hymne = 'laudes/hymnes/hymne_'+temps+'_'+semaine+'_'+jour+'.html';
+	sessionStorage.la_capitule = 'laudes/capitules/capitule_'+temps+'_'+semaine+'_'+jour+'.html';
+	sessionStorage.la_repons = 'laudes/repons/repons_'+temps+'_'+semaine+'_'+jour+'.html';
+	sessionStorage.la_antienne_ev = 'laudes/antiennes/antienne_'+temps+'_'+semaine+'_'+jour+'_ev.html';
+	sessionStorage.la_titre_cantique_ev = 'cantiques/NT2_titre.html';
+	sessionStorage.la_cantique_ev = 'cantiques/NT2.html';
+	sessionStorage.la_intercession = 'laudes/intercessions/intercession_'+temps+'_'+semaine+'_'+jour+'.html';
+
+	if (temps!=3) { // c'est le même invitatoire pour les temps spécifiques
+		sessionStorage.la_antienne_inv = 'laudes/antiennes/antienne_'+temps+'_inv.html';
+		if (temps==2 && date_jour>Epiphanie(date_jour.getFullYear())) { // Temps Noël, après l'Epiphanie
+			sessionStorage.la_antienne_inv = 'laudes/antiennes/antienne_2b_inv.html';
+		}
+		if (temps==5 && date_jour>Ascension(date_jour.getFullYear())) { // Temps pascal, après l'Ascension
+			sessionStorage.la_antienne_inv = 'laudes/antiennes/antienne_5b_inv.html';
+		}
+	}
 	// spécificité du Temps pascal, sauf Octave, Ascension et Pentecôte
 	if (temps==5 && semaine >1 && !(semaine==2 && jour==0) && !(semaine==6 && jour==4) && !(semaine == 8)) {
 		sessionStorage.la_capitule = 'laudes/capitules/capitule_5_'+jour+'.html'; // on	a le même capitule pour chaque semaine du temps pascal
