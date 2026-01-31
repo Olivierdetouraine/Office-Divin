@@ -73,10 +73,19 @@
             color: white;
             text-align: center;
             font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
-            font-size: 16px;
+            font-size: 21px;
             padding: 8px 0;
             font-style: italic;
             background: transparent;
+            margin-top: 40px;
+        }
+        
+        #saint-type {
+            color: #ffcccc;
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            margin-top: -5px;
         }
     </style>
 
@@ -85,17 +94,18 @@
     </ons-toolbar>
 
     <div style="max-width: 500px; margin: 0 auto; padding: 0 15px;">
-        <div id="saint-title"></div>
-        
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; height: 40px;">
             <div id="btn-retour-home" onclick="resetToHome()" style="display: none; cursor: pointer;">
                 <ons-icon icon="md-arrow-left" style="color: white; font-size: 28px;"></ons-icon>
             </div>
             <div id="communs-menu-trigger" onclick="toggleCommunsMenu()" style="display: flex; align-items: center; cursor: pointer; margin-left: auto;">
                 <ons-icon icon="md-caret-down" style="color: white; font-size: 16px; margin-right: 8px;"></ons-icon>
-                <span style="color: white; font-size: 13px; font-weight: bold; text-transform: uppercase;">Communs</span>
+                <span style="color: white; font-size: 13px; font-weight: bold;">Communs</span>
             </div>
         </div>
+        
+        <div id="saint-title"></div>
+        <div id="saint-type"></div>
 
         <ons-list style="background: transparent; border: none;">
             <div id="offices-container">
@@ -179,12 +189,20 @@
                 })
                 .then(html => {
                     if (html) {
-                        // Extraire le texte du titre (enlever les balises HTML)
+                        // Extraire le texte du titre et le type
                         var tempDiv = document.createElement('div');
                         tempDiv.innerHTML = html;
+                        
+                        // Récupérer le nom du saint
                         var titleText = tempDiv.querySelector('h3 b');
                         if (titleText) {
                             document.getElementById('saint-title').textContent = titleText.textContent;
+                        }
+                        
+                        // Récupérer le type (Mémoire, Solennité, etc.)
+                        var typeText = tempDiv.querySelector('p span.rouge i');
+                        if (typeText) {
+                            document.getElementById('saint-type').textContent = typeText.textContent;
                         }
                     }
                 })
