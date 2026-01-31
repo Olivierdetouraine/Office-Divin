@@ -1485,12 +1485,6 @@ function Remplir_office(office) {
 		case 'complies':
 			Formulaire_complies(temps, semaine, jour, annee, date_jour, mois, jour_du_mois, preseance, preseance_sanctoral);
 			Charge_tout('complies');
-			// Ajouter l'appel au lecteur audio pour Complies
-			setTimeout(function() {
-				if (typeof preparerPlaylistDynamique === 'function') {
-					preparerPlaylistDynamique('complies');
-				}
-			}, 800);
 			break;
 	}
 
