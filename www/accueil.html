@@ -70,10 +70,22 @@
             padding: 10px 0;
             text-transform: uppercase;
         }
+
+        #saint-title {
+            color: white;
+            text-align: center;
+            font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
+            font-size: 14px;
+            margin-top: 5px;
+            font-style: italic;
+        }
     </style>
 
     <ons-toolbar class="barre-menu">
-        <div class="custom-header center" id="header-title" style="color: white;"></div>
+        <div class="custom-header center" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div id="header-title" style="color: white;"></div>
+            <div id="saint-title"></div>
+        </div>
     </ons-toolbar>
 
     <div style="max-width: 500px; margin: 0 auto; padding: 0 15px;"> 
