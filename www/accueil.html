@@ -142,13 +142,58 @@
         var currentSaintID = "";
 
         document.addEventListener('init', function(event) {
-            if (event.target.id === 'accueil') { updateHeaderTitle(); }
+            if (event.target.id === 'accueil') { 
+                updateHeaderTitle();
+                loadSaintTitle();
+            }
         });
 
         function updateHeaderTitle() {
             if (typeof Date_du_jour === "function") {
                 document.getElementById('header-title').innerHTML = "Office Divin du " + Date_du_jour(new Date());
             }
+        }
+
+        function loadSaintTitle() {
+            // Récupérer la date actuelle ou celle stockée
+            var dateStr = sessionStorage.getItem('date_c');
+            if (!dateStr) {
+                var d = new Date();
+                dateStr = d.getFullYear() + "/" + 
+                         ("0" + (d.getMonth() + 1)).slice(-2) + "/" + 
+                         ("0" + d.getDate()).slice(-2);
+            }
+            
+            // Extraire le mois et le jour
+            var parts = dateStr.split('/');
+            var mois = parts[1];
+            var jour = parts[2];
+            
+            // Construire le chemin vers le fichier titre
+            var titrePath = 'sanctoral/' + mois + '/' + jour + '-titre.html';
+            
+            // Charger le fichier titre
+            fetch(titrePath)
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    return null;
+                })
+                .then(html => {
+                    if (html) {
+                        // Extraire le texte du titre (enlever les balises HTML)
+                        var tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        var titleText = tempDiv.querySelector('h3 b');
+                        if (titleText) {
+                            document.getElementById('saint-title').textContent = titleText.textContent;
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.log('Pas de titre sanctoral pour ce jour');
+                });
         }
 
         function hideAudioPlayer() {
