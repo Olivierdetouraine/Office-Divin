@@ -82,35 +82,38 @@ function preparerPlaylistDynamique(office) {
 function convertirHtmlVersAudio(fichierHtml) {
     if (!fichierHtml || fichierHtml === 'empty.html') return null;
     
-    // 1. On nettoie le nom (ex: "psaumes/94.html" devient "94")
+    // 1. Nettoyage des données d'entrée
     var parties = fichierHtml.split('/');
-    var nomSeul = parties[parties.length - 1].replace('.html', '');
+    var nomSeul = parties[parties.length - 1].replace('.html', '').trim();
     var dossierOriginal = parties.length > 1 ? parties[0] : '';
 
     var cheminFinal = "";
 
-    // 2. CAS DES PSAUMES (ex: 50, 94, psaume118)
-    if (!isNaN(nomSeul) || nomSeul.indexOf('psaume') !== -1) {
+    // 2. Logique de construction du chemin (cohérente avec tes dossiers)
+    if (!isNaN(nomSeul) || nomSeul.startsWith('psaume')) {
+        // Cas des PSAUMES : on s'assure d'avoir le préfixe "psaume"
         var num = nomSeul.replace('psaume', '');
         cheminFinal = "audio/psaumes/psaume" + num + ".opus";
     } 
-    // 3. CAS DES CANTIQUES (ex: NT2)
     else if (fichierHtml.indexOf('cantiques/') !== -1) {
+        // Cas des CANTIQUES
         cheminFinal = "audio/cantiques/" + nomSeul + ".opus";
     } 
-    // 4. CAS DES OFFICES (laudes, vepres...)
     else if (dossierOriginal !== '') {
+        // Cas des OFFICES (laudes, vepres...)
         cheminFinal = "audio/" + dossierOriginal + "/" + nomSeul + ".opus";
     } 
-    // 5. PAR DÉFAUT
     else {
+        // PAR DÉFAUT
         cheminFinal = "audio/" + nomSeul + ".opus";
     }
 
-    // AJOUT DU SLASH INITIAL POUR ÉVITER LA 404
-    return "/" + cheminFinal;
+    // 3. FORCE L'URL ABSOLUE (Comme ton test de vérité)
+    // window.location.origin récupère "https://office-divin.pages.dev"
+    const urlAbsolue = window.location.origin + "/" + cheminFinal;
+    
+    return urlAbsolue;
 }
-
 // Extraire un nom lisible du fichier
 function extraireNomFichier(fichier) {
     if (!fichier) return '';
